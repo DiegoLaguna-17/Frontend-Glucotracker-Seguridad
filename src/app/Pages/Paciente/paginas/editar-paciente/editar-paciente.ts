@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../../../environments/environment';
@@ -44,7 +44,6 @@ export interface Treatment {
   imports: [
     CommonModule, 
     ReactiveFormsModule, 
-    HttpClientModule,
     FormsModule
   ],
   templateUrl: './editar-paciente.html',

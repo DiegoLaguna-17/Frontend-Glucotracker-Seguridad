@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { PerfilModelo } from '../../componentes/card-medico-a/card-medico-a';
-import { HttpClient, HttpErrorResponse, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from '../../../../../../environments/environment';
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-detalle-medico-solicitud',
-  imports: [ CommonModule, HttpClientModule],
+  imports: [ CommonModule],
   templateUrl: './detalle-medico-solicitud.html',
   styleUrl: './detalle-medico-solicitud.scss',
 })

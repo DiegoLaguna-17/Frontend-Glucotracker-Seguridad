@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { PerfilModelo } from '../../componentes/card-medico-a/card-medico-a';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from '../../../../../../environments/environment';
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-detalle-medico-solicitud',
-  imports: [HttpClientModule, CommonModule],
+  imports: [ CommonModule],
   templateUrl: './detalle-medico-solicitud.html',
   styleUrl: './detalle-medico-solicitud.scss',
 })
@@ -94,7 +94,7 @@ export class DetalleMedicoSolicitud implements OnInit {
     const payload = { idAdmin };
     
     this.http.put(activarUrl, payload).subscribe({
-      next: (res) => {
+      next: () => {
         this.mostrarModalExito = true;
       },
       error: (err) => {
@@ -109,7 +109,7 @@ export class DetalleMedicoSolicitud implements OnInit {
     this.mostrarModalError = true;
   }
 
-  obtenerMensajeError(err: any): string {
+  obtenerMensajeError(err: HttpErrorResponse): string {
     if (err.status === 404) {
       return 'No se encontró el médico';
     } else if (err.status === 403) {

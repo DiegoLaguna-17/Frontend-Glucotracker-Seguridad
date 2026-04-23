@@ -28,19 +28,10 @@ export class Agregar {
     this.adminForm = this.fb.group({
       nombre: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      contrasena: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/)
-        ]
-      ],
-      confirmarContrasena: ['', Validators.required],
+      contrasena: ['', [Validators.required, Validators.minLength(6)]],
       fechaNacimiento: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
       cargo: ['', Validators.required]
-    }, {
-    validators: this.passwordsMatchValidator
     });
   }
 
@@ -125,16 +116,6 @@ export class Agregar {
     this.mostrarModalError = false;
     if (this.datosPendientes) {
       this.enviarAlBackend(this.datosPendientes);
-    }
-  }
-  passwordsMatchValidator(form: FormGroup) {
-    const password = form.get('contrasena')?.value;
-    const confirm = form.get('confirmarContrasena')?.value;
-
-    if (password !== confirm) {
-      form.get('confirmarContrasena')?.setErrors({ mismatch: true });
-    } else {
-      form.get('confirmarContrasena')?.setErrors(null);
     }
   }
 

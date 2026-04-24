@@ -1,4 +1,5 @@
 <div class="general">
+  
   <div class="form-container">
     <h2>Registro de Médicos</h2>
 
@@ -24,9 +25,20 @@
             <label>Teléfono</label>
             <input type="tel" formControlName="telefono" placeholder="Ingrese teléfono" />
           </div>
-          <div class="input-box">
+          <!-- <div class="input-box">
             <label>Departamento</label>
             <input type="text" formControlName="departamento" placeholder="Ingrese departamento" />
+          </div> -->
+          <div class="input-box">
+            <label for="departamento">Departamento</label>
+            
+            <select id="departamento" formControlName="departamento">
+              <option value="" disabled selected>Seleccione un departamento</option>
+              
+              <option value="La Paz">La Paz</option>
+              <option value="Cochabamba">Cochabamba</option>
+              <option value="Santa Cruz">Santa Cruz</option>
+            </select>
           </div>
         </div>
          <div class="input-box full-width">

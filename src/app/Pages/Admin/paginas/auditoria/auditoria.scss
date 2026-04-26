@@ -1,6 +1,8 @@
 .auditoria-container {
+  box-sizing: border-box; //para ajustar la pantalla
   padding: 2rem;
-  max-width: 1200px;
+  padding-left: 50px;//para ajustar la pantalla
+  // max-width: 1200px;
   margin: 0 auto;
   min-height: 100vh;
   background-color: #c5e6e9;

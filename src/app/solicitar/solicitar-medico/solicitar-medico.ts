@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient  } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-solicitar-medico',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule ],
   templateUrl: './solicitar-medico.html',
   styleUrls: ['./solicitar-medico.scss']
 })
@@ -19,7 +19,8 @@ export class SolicitarMedicoComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router
-  ) {
+  ) 
+  {
     this.medicoForm = this.fb.group({
     nombre_completo: ['', Validators.required],
     fecha_nac: ['', Validators.required],
@@ -51,8 +52,9 @@ export class SolicitarMedicoComponent implements OnInit {
 matriculaProfesionalFile: File | null = null;
 carnetProfesionalFile: File | null = null;
 
-onFileSelected(event: any, tipo: string) {
-  const file = event.target.files[0];
+onFileSelected(event: Event, tipo: string) {
+  const element = event.target as HTMLInputElement;
+  const file = element.files?.[0];
   if (!file) return;
 
   if (tipo === 'matricula' && file.type !== 'application/pdf') {

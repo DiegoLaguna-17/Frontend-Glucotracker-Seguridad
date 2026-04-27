@@ -23,6 +23,29 @@
     </div>
   </div>
 
+  <div class="tarjeta seccion-permisos">
+    <h2>Control de Permisos</h2>
+    <div class="lista-permisos">
+      <div class="permiso-item" *ngFor="let permiso of listaPermisos">
+        <div class="permiso-texto">
+          <strong>{{ permiso.label }}</strong>
+          <p>{{ permiso.descripcion }}</p>
+        </div>
+        <label class="switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="permisosEstado[permiso.key]"
+            (change)="togglePermiso(permiso.key)"
+          />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    <div>
+      <button>Guardar cambios</button>
+    </div>
+  </div>
+
   <div class="tarjeta seccion-documentos">
     <h2>Carnet y Matricula</h2>
     <div class="grid-documentos">
@@ -36,7 +59,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="tarjeta">
     <h3>Admitido por</h3>
     <p>{{ medico.admitidoPor }}</p>

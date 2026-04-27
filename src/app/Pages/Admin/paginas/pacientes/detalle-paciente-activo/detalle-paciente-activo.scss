@@ -1,204 +1,259 @@
-/* Paleta */
+/* Paleta Original */
 $bg: #eaf6f7;
 $ink: #172b3a;
 $muted: #5d6b7a;
 $border: #9dd7db;
 $primary: #0a80fb;
 $chip-bg: #e6f7ff;
+/* Nuevas variables de apoyo */
+$white: #ffffff;
+$shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+$radius: 16px;
 
-
-
+/* CONTENEDOR PRINCIPAL */
 .detalle-paciente {
-  background: #e7fafa;
+  background: $bg;
   min-height: 100vh;
   padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  font-family: 'Segoe UI', sans-serif;
-  color: #222;
-  animation: fadeIn 0.8s ease-out;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: $ink;
+  animation: fadeIn 0.6s ease-out;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
 }
+
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
+/* CLASE BASE PARA TODAS LAS CAJAS */
+.tarjeta {
+  background: $white;
+  border-radius: $radius;
+  padding: 24px;
+  box-shadow: $shadow;
+  border: 1px solid rgba($border, 0.4);
 }
 
-h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
+/* TIPOGRAFÍA BÁSICA */
+h1 { font-size: 1.8rem; font-weight: 700; margin: 0; color: $ink; }
+h2 { font-size: 1.2rem; font-weight: 600; margin: 0 0 16px 0; color: $ink; }
+h3 { font-size: 1.1rem; font-weight: 600; margin: 0; color: $ink; }
+.subtitulo { font-size: 0.9rem; color: $muted; margin: -8px 0 16px 0; }
+.label { color: $muted; font-size: 0.9rem; font-weight: 500; }
+.valor { color: $ink; font-size: 0.95rem; font-weight: 600; }
 
-.info-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-areas:
-    "datos actividad"
-    "datos afecciones";
-  gap: 16px;
+.separador { height: 1px; background: rgba($border, 0.3); margin: 20px 0; }
 
-  .datos {
-    grid-area: datos;
-  }
-
-  .actividad {
-    grid-area: actividad;
-  }
-
-  .afecciones {
-    grid-area: afecciones;
-  }
-}
-
-.datos,
-.actividad,
-.afecciones {
-  background: #fff;
-  border: 1.5px solid #a2d8d8;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.grid-datos {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px 12px;
-
-  p {
-    margin: 4px 0;
-    font-size: 0.95rem;
-  }
-}
-
-.afecciones .chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.chip {
-  background: #dff6f0;
-  border: 1px solid #7bbfab;
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.tratamientos {
-  background: #fff;
-  border: 1.5px solid #a2d8d8;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-
-  h2 {
-    margin-bottom: 12px;
-  }
-}
-
-.tratamiento {
-  border: 1.2px solid #a2d8d8;
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-
-  .cabecera h3 {
-    color: #1b5e20;
-    margin-bottom: 6px;
-  }
-
-  .contenido p {
-    margin: 2px 0;
-  }
-}
-
-.admin {
-  text-align: center;
-  background: #fff;
-  border: 1.5px solid #a2d8d8;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-
-  h3 {
-    margin-top: 6px;
-    font-weight: 500;
-  }
-}
-
-@media (max-width: 768px) {
-  .info-grid {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "datos"
-      "actividad"
-      "afecciones";
-  }
-
-  .grid-datos {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-
+/* HEADER PERFIL */
 .perfil-header {
   display: flex;
   align-items: center;
-  gap: 22px;
-  margin-bottom: 24px;
-  animation: slideIn 0.6s ease-out;
+  gap: 24px;
+
+  .perfil-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 
   @media (max-width: 700px) {
     flex-direction: column;
     text-align: center;
-    gap: 14px;
+    .perfil-info { align-items: center; }
   }
 }
 
-/* FOTO MÁS GRANDE Y RESPONSIVE */
 .foto-wrapper {
-  width: 150px;
-  height: 150px;
-  min-width: 150px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  border: 4px solid $primary;
-  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.15);
-  background: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all .25s ease;
+  border: 4px solid $white;
+  box-shadow: 0 4px 12px rgba(10, 128, 251, 0.2);
+  background: $bg;
 
-  @media (max-width: 700px) {
-    width: 130px;
-    height: 130px;
-    min-width: 130px;
-  }
-
-  @media (max-width: 450px) {
-    width: 115px;
-    height: 115px;
-    min-width: 115px;
+  .foto-perfil {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
-.foto-perfil {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.chip-status {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* LAYOUT DASHBOARD (2 Columnas) */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.columna {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* DATOS Y GRILLAS INTERNAS */
+.grid-datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+
+  .dato-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+.header-doble {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  .valor-destacado {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $primary;
+    margin: 0;
+  }
+
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* CHIPS DE AFECCIONES */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  background: $chip-bg;
+  color: $primary;
+  border: 1px solid rgba($primary, 0.2);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* TRATAMIENTOS */
+.lista-tratamientos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tratamiento {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: #f8fcfe;
+  border: 1px solid rgba($border, 0.4);
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateX(4px);
+  }
+
+  .tratamiento-icono {
+    font-size: 1.5rem;
+  }
+
+  .tratamiento-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .desc { font-size: 0.9rem; color: $muted; margin: 0; }
+    .dosis { font-size: 0.9rem; color: $ink; margin: 4px 0 0 0; }
+  }
+}
+
+/* BOTONES DE PERMISOS */
+.botones-permisos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+
+    .icono {
+      font-style: normal;
+      font-size: 1.1rem;
+    }
+    
+    &.denegado {
+      background-color: $chip-bg;
+      color: $primary;
+      border: 1px solid rgba($primary, 0.3);
+      
+      &:hover { background-color: #d6efff; }
+    }
+
+    &.permitido {
+      background-color: #fdeaea;
+      color: #d32f2f;
+      border: 1px solid rgba(#d32f2f, 0.3);
+      
+      &:hover { background-color: #fbd6d6; }
+    }
+  }
+}
+
+/* FOOTER ADMINISTRADORES */
+.footer-admin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  text-align: center;
+  gap: 16px;
+
+  .admin-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }

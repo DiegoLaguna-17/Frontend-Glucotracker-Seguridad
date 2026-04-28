@@ -114,6 +114,20 @@ export const routes: Routes = [
                 path:'editar-paciente', loadComponent:()=>import('./Pages/Paciente/paginas/editar-paciente/editar-paciente').then(m=>m.EditarPaciente)
             }
         ]
+    },
+    {
+        path:'osi',loadComponent:()=>import('./Pages/OSI/osi-shell/osi-shell').then(m=>m.OsiShell),
+        children:[
+            {
+                path:'',pathMatch:'full',redirectTo:'permisos'
+            },
+            {
+                path:'permisos', loadComponent:()=>import('./Pages/OSI/paginas/gestion-permisos/gestion-permisos').then(m=>m.GestionPermisos)
+            },
+            {
+                path:'roles',loadComponent:()=>import('./Pages/OSI/paginas/gestion-roles/gestion-roles').then(m=>m.GestionRoles)
+            }
+        ]
     }
 
 ];

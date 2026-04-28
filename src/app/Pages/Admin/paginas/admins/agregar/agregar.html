@@ -1,15 +1,13 @@
 <div class="general">
   <div class="form-container">
-    <h2>Registro de Administrador</h2>
+    <h2>Registro de Equipo Operativo (Soporte)</h2>
 
     <form [formGroup]="adminForm" (ngSubmit)="registrar()">
-      <!-- Nombre Completo -->
       <div class="input-box full-width">
         <label>Nombre Completo</label>
         <input type="text" formControlName="nombre" placeholder="Ingrese el nombre completo" />
       </div>
 
-      <!-- Fecha de nacimiento y Teléfono -->
       <div class="row">
         <div class="input-box">
           <label>Fecha de nacimiento</label>
@@ -21,36 +19,23 @@
         </div>
       </div>
 
-      <!-- Cargo, Correo y Contraseña -->
-      <div class="row">
-        <div class="input-box">
-          <label>Cargo</label>
-          <select formControlName="cargo">
-            <option value="">Seleccione un cargo</option>
-            <option value="admin">Admin</option>
-            <option value="soporte">Soporte</option>
-          </select>
-        </div>
-        <div class="input-box">
-          <label>Correo</label>
-          <input type="email" formControlName="correo" placeholder="Ingrese el correo electrónico" />
-        </div>
+      <div class="input-box full-width">
+        <label>Correo Electrónico</label>
+        <input type="email" formControlName="correo" placeholder="Ingrese el correo electrónico" />
       </div>
+      
       <div>
         <div class="input-box full-width">
           <label>Contraseña</label>
           <input type="password" formControlName="contrasena" placeholder="Ingrese contraseña" />
 
           <small *ngIf="adminForm.get('contrasena')?.touched && adminForm.get('contrasena')?.errors">
-            
             <span *ngIf="adminForm.get('contrasena')?.errors?.['required']">
               La contraseña es obligatoria
             </span>
-
             <span *ngIf="adminForm.get('contrasena')?.errors?.['pattern']">
               Debe tener al menos 12 caracteres, incluir mayúsculas, minúsculas, números y símbolos
             </span>
-
           </small>
         </div>
         <div class="input-box full-width">
@@ -58,36 +43,29 @@
           <input type="password" formControlName="confirmarContrasena" placeholder="Repite la contraseña" />
 
           <small *ngIf="adminForm.get('confirmarContrasena')?.touched && adminForm.get('confirmarContrasena')?.errors">
-
             <span *ngIf="adminForm.get('confirmarContrasena')?.errors?.['required']">
               Debes confirmar la contraseña
             </span>
-
             <span *ngIf="adminForm.get('confirmarContrasena')?.errors?.['mismatch']">
               Las contraseñas no coinciden
             </span>
-
           </small>
         </div>
       </div>
 
-      <!-- Botón Registrar -->
-       <div class="button-container">
-        <button type="submit" class="btn" [disabled]="!adminForm.valid">Registrar</button>
+      <div class="button-container">
+        <button type="submit" class="btn" [disabled]="!adminForm.valid">Registrar Personal</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Modal de éxito -->
 <div class="modal-overlay" *ngIf="mostrarModalExito" (click)="cerrarModalExito()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-body">
-      <div class="modal-icon grande" style="color: #28a745; font-size: 4rem;
-  font-weight: bold;
-  margin-bottom: 1rem;">✓</div>
+      <div class="modal-icon grande" style="color: #28a745; font-size: 4rem; font-weight: bold; margin-bottom: 1rem;">✓</div>
       <h3>¡Registro Exitoso!</h3>
-      <p>Administrador registrado correctamente</p>
+      <p>Personal de soporte registrado correctamente y asignado a su rol.</p>
       <div class="modal-footer">
         <button class="btn btn-modal-aceptar" (click)="cerrarModalExito()">Aceptar</button>
       </div>
@@ -95,7 +73,6 @@
   </div>
 </div>
 
-<!-- Modal de error -->
 <div class="modal-overlay" *ngIf="mostrarModalError" (click)="cerrarModalError()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -116,7 +93,6 @@
   </div>
 </div>
 
-<!-- Modal de validación (cuando el formulario no es válido) -->
 <div class="modal-overlay" *ngIf="mostrarModalValidacion" (click)="cerrarModalValidacion()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">

@@ -34,7 +34,7 @@ export class Pacientes implements OnInit{
     const pacientesUrl = `${environment.apiUrl}/medicos/misPacientes/${idMedico}`;
 
     this.loading = true;
-   this.http.get<PacienteResumen[]>(pacientesUrl).subscribe({
+   this.http.get<PacienteResumen[]>(pacientesUrl, {withCredentials:true}).subscribe({
   next: (data) => {
     this.pacientes.set(Array.isArray(data) ? data : []);
     console.log('Pacientes cargados:', this.pacientes());

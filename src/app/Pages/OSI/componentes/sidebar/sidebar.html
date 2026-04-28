@@ -1,0 +1,28 @@
+
+  <!-- ad-sidebar.component.html -->
+<div class="sidebar">
+  <div class="top">
+    <div class="avatar">
+      <img src="glucoTracker.png" alt="">
+    </div>
+
+  </div>
+  <nav class="menu">
+      <a class="item" routerLink="./permisos" routerLinkActive="active">
+
+        <span>Permisos</span>
+      </a>
+      <a class="item" routerLink="./roles" routerLinkActive="active">
+
+        <span>Roles</span>
+      </a>
+
+      
+
+      
+    </nav>
+
+  <button class="logout" type="button" (click)="logout.emit()">
+    Cerrar Sesión
+  </button>
+</div>

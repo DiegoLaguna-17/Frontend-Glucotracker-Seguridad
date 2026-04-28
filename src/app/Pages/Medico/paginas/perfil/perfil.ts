@@ -50,7 +50,7 @@ export class Perfil implements OnInit {
   cargarPerfil() {
     console.log('Cargando perfil médico, ID:', this.idUsuario);
     
-    this.http.get<PerfilModelo>(`${environment.apiUrl}/medicos/perfil/${this.idUsuario}`)
+    this.http.get<PerfilModelo>(`${environment.apiUrl}/medicos/perfil/${this.idUsuario}`,{withCredentials:true})
       .subscribe({
         next: (data) => {
           this.medico = data;

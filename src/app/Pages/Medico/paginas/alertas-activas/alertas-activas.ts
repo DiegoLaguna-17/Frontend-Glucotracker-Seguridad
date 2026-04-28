@@ -71,7 +71,7 @@ export class AlertasActivas implements OnInit {
     console.log('Resolver alerta',{datos});
 
     const url=`${environment.apiUrl}/medicos/responder/alerta`;
-    this.http.post(url,datos).subscribe({
+    this.http.post(url,datos,{withCredentials:true}).subscribe({
       next:(res)=>{
         this.isSuccessOpen=true
         this.alertas.set([]);
@@ -95,7 +95,7 @@ export class AlertasActivas implements OnInit {
   cargarAlertas(idMedico: string|null) {
     this.loading.set(true);
     this.http
-      .get<AlertaResumen[]>(`${environment.apiUrl}/medicos/alertasActivas/${idMedico}`)
+      .get<AlertaResumen[]>(`${environment.apiUrl}/medicos/alertasActivas/${idMedico}`,{withCredentials:true})
       .subscribe({
         next: (data) => {
           // mapear los tipos si es necesario

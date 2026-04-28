@@ -37,35 +37,29 @@ export class Agregar {
       ],
       confirmarContrasena: ['', Validators.required],
       fechaNacimiento: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
-      cargo: ['', Validators.required]
+      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]]
+      // Se elimina el campo "cargo" del frontend
     }, {
-    validators: this.passwordsMatchValidator
+      validators: this.passwordsMatchValidator
     });
   }
 
   registrar() {
     if (this.adminForm.valid) {
-      // Obtener la fecha de hoy
       const fechaHoy = new Date().toISOString().split('T')[0];
       
-      // Crear el objeto con los datos para enviar al backend
       const datosParaBackend = {
         ...this.adminForm.value,
         fecha_registro: fechaHoy,
-        administrador_id_admin: localStorage.getItem("id_rol")
+        administrador_id_admin: localStorage.getItem("id_rol") // Asegúrate de que este ID corresponda al OSI logueado
       };
 
       console.log('Datos a enviar al backend:', datosParaBackend);
       
-      // Guardar datos por si hay que reintentar
       this.datosPendientes = datosParaBackend;
-      
-      // Llamar al método para enviar al backend
       this.enviarAlBackend(datosParaBackend);
       
     } else {
-      // Mostrar modal de validación en lugar de alert
       this.mostrarModalValidacion = true;
       this.marcarCamposInvalidos();
     }
@@ -74,7 +68,8 @@ export class Agregar {
   enviarAlBackend(datos: any) {
     const url = `${environment.apiUrl}/administradores/agregar`;
     
-    this.http.post(url, datos).subscribe({
+    // IMPORTANTE: Se añade withCredentials para pasar el token de sesión (si usas cookies)
+    this.http.post(url, datos, { withCredentials: true }).subscribe({
       next: (response) => {
         console.log('Respuesta del backend:', response);
         this.mostrarModalExito = true;
@@ -117,7 +112,7 @@ export class Agregar {
     } else if (err.status === 0) {
       return 'Error de conexión con el servidor. Verifique su internet.';
     } else {
-      return 'Error al registrar administrador. Por favor, intente nuevamente.';
+      return 'Error al registrar personal. Por favor, intente nuevamente.';
     }
   }
 
@@ -127,6 +122,7 @@ export class Agregar {
       this.enviarAlBackend(this.datosPendientes);
     }
   }
+  
   passwordsMatchValidator(form: FormGroup) {
     const password = form.get('contrasena')?.value;
     const confirm = form.get('confirmarContrasena')?.value;

@@ -36,8 +36,22 @@ export class Login implements OnInit {
   }
 
   forgotPassword() {
-    console.log('Redirigir a recuperación de contraseña (pendiente)');
+    this.showRecoverEmailModal.set(true);
   }
+
+  // Variables para la recuperación de contraseña
+  showRecoverEmailModal = signal(false);
+  showRecoverCodeModal = signal(false);
+  showRecoverPasswordModal = signal(false);
+  recoverEmail = '';
+  recoverJwtToken = '';
+
+  recoverForm = this.fb.group({
+    nueva_contrasena: ['', [Validators.required, Validators.minLength(12)]],
+    confirmar_contrasena: ['', [Validators.required]]
+  });
+
+  get rf() { return this.recoverForm.controls; }
 
   // Variable para guardar las credenciales temporalmente
   private loginCredentials: { id_usuario?: number, correo: string, contrasena: string } | null = null;
@@ -88,13 +102,13 @@ export class Login implements OnInit {
         error: (err) => {
           console.error('Error de login:', err);
 
-          this.showErrorModal.set(true);
+            this.showErrorModal.set(true);
           // 🔹 4. Extraemos el mensaje de error estandarizado del backend
-          this.errorMessage.set(err.error?.message || 'Error al conectar con el servidor');
-          this.loading.set(false);
-        }
-      });
-  }
+            this.errorMessage.set(err.error?.message || 'Error al conectar con el servidor');
+            this.loading.set(false);
+          }
+        });
+    }
 
   // Método para verificar el código y hacer el login real
   verifyAndLogin(codeInput: HTMLInputElement) {
@@ -107,11 +121,11 @@ export class Login implements OnInit {
       return;
     }
 
-    if (!codigo || codigo.length !== 6) {
-      this.showErrorModal.set(true);
-      this.errorMessage.set('Ingresa un código válido de 6 dígitos');
-      return;
-    }
+      if (!codigo || codigo.length !== 6) {
+        this.showErrorModal.set(true);
+        this.errorMessage.set('Ingresa un código válido de 6 dígitos');
+        return;
+      }
 
     this.loading.set(true);
 
@@ -153,16 +167,119 @@ export class Login implements OnInit {
           }
         }, 2000);
 
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Error de verificación OTP:', err);
+          this.showErrorModal.set(true);
+        // 🔹 6. Manejo del error para el OTP
+          this.errorMessage.set(err.error?.message || 'Código incorrecto o expirado');
+          this.loading.set(false);
+        }
+      });
+    }
+
+  // --- MÉTODOS DE RECUPERACIÓN DE CONTRASEÑA ---
+
+  solicitarRecuperacion(emailInput: HTMLInputElement) {
+    const correo = emailInput.value.trim();
+    if (!correo) {
+      this.showErrorModal.set(true);
+      this.errorMessage.set('Ingresa tu correo electrónico');
+      return;
+    }
+    this.loading.set(true);
+    console.log(environment.apiUrl + '/seguridad/recuperar-contrasena');
+    this.http.post<any>(environment.apiUrl + '/seguridad/recuperar-contrasena', { correo }).subscribe({
+      next: (res) => {
+        this.recoverEmail = correo;
+        this.showRecoverEmailModal.set(false);
+        this.showRecoverCodeModal.set(true);
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Error de verificación OTP:', err);
+        console.error('ERROR COMPLETO:', err);
+        console.error('STATUS:', err.status);
+        console.error('BODY:', err.error);
+
         this.showErrorModal.set(true);
-        // 🔹 6. Manejo del error para el OTP
-        this.errorMessage.set(err.error?.message || 'Código incorrecto o expirado');
+        this.errorMessage.set(err.error?.error || 'Error al solicitar recuperación');
         this.loading.set(false);
       }
     });
+  }
+
+  verificarCodigoRecuperacion(codeInput: HTMLInputElement) {
+    const codigo = codeInput.value.trim();
+    if (!codigo || codigo.length !== 6) {
+      this.showErrorModal.set(true);
+      this.errorMessage.set('Ingresa un código válido de 6 dígitos');
+      return;
+    }
+    this.loading.set(true);
+    this.http.post<any>(environment.apiUrl + '/seguridad/verificar-codigo-recuperacion', {
+      correo: this.recoverEmail,
+      codigo
+    }).subscribe({
+      next: (res) => {
+        this.recoverJwtToken = res.token;
+        this.showRecoverCodeModal.set(false);
+        this.showRecoverPasswordModal.set(true);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('ERROR COMPLETO:', err);
+        console.error('STATUS:', err.status);
+        console.error('BODY:', err.error);
+
+        this.showErrorModal.set(true);
+        this.errorMessage.set(err.error?.error || 'Código incorrecto o expirado');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  restablecerContrasena() {
+    if (this.recoverForm.invalid) {
+      this.recoverForm.markAllAsTouched();
+      return;
+    }
+    const nueva = this.recoverForm.value.nueva_contrasena;
+    const confirm = this.recoverForm.value.confirmar_contrasena;
+    if (nueva !== confirm) {
+      this.showErrorModal.set(true);
+      this.errorMessage.set('Las contraseñas no coinciden');
+      return;
+    }
+    this.loading.set(true);
+    this.http.post<any>(environment.apiUrl + '/seguridad/cambiar-contrasena',
+      { nueva_contrasena: nueva },
+      { headers: { Authorization: 'Bearer ' + this.recoverJwtToken } }
+    ).subscribe({
+      next: (res) => {
+        this.showRecoverPasswordModal.set(false);
+        this.showSuccessModal.set(true);
+        this.recoverForm.reset();
+        this.recoverJwtToken = '';
+        this.recoverEmail = '';
+        setTimeout(() => this.showSuccessModal.set(false), 3000);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.showErrorModal.set(true);
+        this.errorMessage.set(err.error?.error || 'Error al cambiar contraseña');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  cancelarRecuperacion() {
+    this.showRecoverEmailModal.set(false);
+    this.showRecoverCodeModal.set(false);
+    this.showRecoverPasswordModal.set(false);
+    this.recoverEmail = '';
+    this.recoverJwtToken = '';
+    this.recoverForm.reset();
   }
 
   // Método para cancelar y limpiar credenciales

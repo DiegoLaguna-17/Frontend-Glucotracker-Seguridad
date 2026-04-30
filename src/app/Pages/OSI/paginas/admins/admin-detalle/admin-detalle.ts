@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../../../environments/environment';
@@ -35,6 +35,11 @@ export class AdminDetalle implements OnInit {
   administrador!: PerfilAdmin;
   loading = false;
 
+  // --- NUEVO: Lógica de Modales de Alerta ---
+  showSuccessModal = signal(false);
+  showErrorModal = signal(false);
+  modalMessage = signal('');
+
   ngOnInit() {
     // Recuperamos el objeto enviado por el state del router
     this.administrador = history.state.admin as PerfilAdmin;
@@ -57,13 +62,38 @@ export class AdminDetalle implements OnInit {
         // Actualizamos el estado localmente para que la vista cambie de inmediato
         this.administrador.estado = !this.administrador.estado;
         this.loading = false;
-        alert(res.message);
+        
+        // Reemplazamos el alert() nativo por nuestro modal de éxito
+        this.abrirModalExito(res.message);
       },
       error: (err) => {
         this.loading = false;
         const msg = err.error?.message || 'Error al procesar la solicitud';
-        alert('Error: ' + msg);
+        
+        // Reemplazamos el alert() nativo por nuestro modal de error
+        this.abrirModalError(msg);
       }
     });
+  }
+
+  // --- Controladores de Modales de Alerta ---
+  abrirModalExito(mensaje: string) {
+    this.modalMessage.set(mensaje);
+    this.showSuccessModal.set(true);
+    
+    // Auto cerrar el modal de éxito después de 3 segundos
+    setTimeout(() => {
+      this.showSuccessModal.set(false);
+    }, 3000);
+  }
+
+  abrirModalError(mensaje: string) {
+    this.modalMessage.set(mensaje);
+    this.showErrorModal.set(true);
+  }
+
+  cerrarModalAlerta() {
+    this.showSuccessModal.set(false);
+    this.showErrorModal.set(false);
   }
 }

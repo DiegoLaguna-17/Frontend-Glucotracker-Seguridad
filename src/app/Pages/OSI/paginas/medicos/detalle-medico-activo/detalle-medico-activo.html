@@ -61,6 +61,7 @@
     <h3>Admitido por</h3>
     <p>{{ medico.admitidoPor }}</p>
   </div>
+  
   <div class="actions-container">
     <button class="btn" [class.btn-danger]="medico.estado" [class.btn-success]="!medico.estado" [disabled]="loading"
       type="button" (click)="toggleEstado()">
@@ -72,4 +73,34 @@
 
     </button>
   </div>
+
+  <!-- Modal de Éxito -->
+  <div class="modal-backdrop modal-alerta-bg" *ngIf="showSuccessModal()" (click)="cerrarModalAlerta()"></div>
+  <div class="modal-alerta modal-alerta--success" *ngIf="showSuccessModal()">
+    <div class="alerta-icon-wrapper success-bg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+    <h3 class="alerta-title">¡Operación Exitosa!</h3>
+    <p class="alerta-message">{{ modalMessage() }}</p>
+  </div>
+
+  <!-- Modal de Error -->
+  <div class="modal-backdrop modal-alerta-bg" *ngIf="showErrorModal()"></div>
+  <div class="modal-alerta modal-alerta--error" *ngIf="showErrorModal()">
+    <button class="close-alerta" (click)="cerrarModalAlerta()">✕</button>
+    <div class="alerta-icon-wrapper error-bg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+    <h3 class="alerta-title">Ha ocurrido un error</h3>
+    <p class="alerta-message">{{ modalMessage() }}</p>
+    <button class="btn-entendido" (click)="cerrarModalAlerta()">Entendido</button>
+  </div>
+
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SafeUrlPipe } from '../../../../../pipes/safe-url.pipe';
 import { CommonModule } from '@angular/common';
@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from '../../../../../../environments/environment';
 
-// 🔹 1. Interfaz de respuesta
 export interface ApiResponse<T> {
   status: string;
   code: number;
@@ -15,8 +14,8 @@ export interface ApiResponse<T> {
 }
 
 export interface PerfilModelo {
-  id: string;          // id_medico
-  id_usuario: string;  // 👈 IMPORTANTE: Necesario para el endpoint de usuarios
+  id: string;          
+  id_usuario: string;  
   nombre: string;
   fechaNac: string;
   telefono: string;
@@ -25,7 +24,7 @@ export interface PerfilModelo {
   departamento: string;
   carnet: string;
   admitidoPor: string | null;
-  estado: boolean;     // 👈 Para saber si está activo o suspendido
+  estado: boolean;     
 }
 
 @Component({
@@ -39,9 +38,13 @@ export class DetalleMedicoActivo implements OnInit {
   medico!: PerfilModelo;
   pdf!: SafeResourceUrl;
 
-  // 🔹 2. Inyectamos HTTP y creamos variable de carga
   private http = inject(HttpClient);
   loading = false;
+
+  // --- NUEVO: Lógica de Modales de Alerta ---
+  showSuccessModal = signal(false);
+  showErrorModal = signal(false);
+  modalMessage = signal('');
 
   constructor(private sanitizer: DomSanitizer) { }
 
@@ -57,12 +60,11 @@ export class DetalleMedicoActivo implements OnInit {
     }
   }
 
-  // 🔹 3. Método para alternar el estado (Suspender / Activar)
   toggleEstado() {
     if (!this.medico) return;
 
     this.loading = true;
-    const id = this.medico.id_usuario; // Usamos el ID del usuario
+    const id = this.medico.id_usuario; 
 
     // Decidimos qué endpoint usar según el estado actual
     const accion = this.medico.estado ? 'suspender' : 'reactivar';
@@ -74,13 +76,38 @@ export class DetalleMedicoActivo implements OnInit {
         // Actualizamos la vista localmente
         this.medico.estado = !this.medico.estado;
         this.loading = false;
-        alert(res.message);
+        
+        // Reemplazamos el alert() nativo por nuestro modal de éxito
+        this.abrirModalExito(res.message);
       },
       error: (err) => {
         this.loading = false;
         const msg = err.error?.message || 'Error al procesar la solicitud';
-        alert('Error: ' + msg);
+        
+        // Reemplazamos el alert() nativo por nuestro modal de error
+        this.abrirModalError(msg);
       }
     });
+  }
+
+  // --- Controladores de Modales de Alerta ---
+  abrirModalExito(mensaje: string) {
+    this.modalMessage.set(mensaje);
+    this.showSuccessModal.set(true);
+    
+    // Auto cerrar el modal de éxito después de 3 segundos
+    setTimeout(() => {
+      this.showSuccessModal.set(false);
+    }, 3000);
+  }
+
+  abrirModalError(mensaje: string) {
+    this.modalMessage.set(mensaje);
+    this.showErrorModal.set(true);
+  }
+
+  cerrarModalAlerta() {
+    this.showSuccessModal.set(false);
+    this.showErrorModal.set(false);
   }
 }

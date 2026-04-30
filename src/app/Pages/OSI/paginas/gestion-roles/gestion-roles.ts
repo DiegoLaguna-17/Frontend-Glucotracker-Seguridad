@@ -28,10 +28,16 @@ export class GestionRoles implements OnInit {
   
   roles = signal<Rol[]>([]);
   private rolesOriginales = signal<string>('');
+  loadingGuardar = signal(false); // Para mostrar estado de carga al guardar
   
-  // --- Lógica del Modal ---
+  // --- Lógica del Modal Crear Rol ---
   mostrarModal = signal(false);
   nuevoRolNombre = '';
+
+  // --- NUEVO: Lógica de Modales de Alerta ---
+  showSuccessModal = signal(false);
+  showErrorModal = signal(false);
+  modalMessage = signal('');
 
   permisosDisponibles = computed(() => {
     const listaRoles = this.roles();
@@ -59,6 +65,7 @@ export class GestionRoles implements OnInit {
         },
         error: (err) => {
           console.error('Error cargando matriz:', err);
+          this.abrirModalError('No se pudo cargar la matriz de roles. Verifica tu conexión.');
         }
       });
   }
@@ -90,27 +97,22 @@ export class GestionRoles implements OnInit {
     return permiso ? permiso.activo : false;
   }
 
-  // --- LÓGICA DE EXTRACCIÓN DE CAMBIOS ---
   obtenerCambios(): Rol[] {
     const actuales = this.roles();
     const originales: Rol[] = JSON.parse(this.rolesOriginales());
     const payloadCambios: Rol[] = [];
 
     actuales.forEach(rolActual => {
-      // Buscamos cómo estaba este rol originalmente
       const rolOriginal = originales.find(r => r.id_rol === rolActual.id_rol);
 
       if (!rolOriginal) {
-        // Es un rol nuevo creado desde el modal. Enviamos todos sus permisos.
         payloadCambios.push(rolActual);
       } else {
-        // Es un rol existente. Filtramos SOLO los permisos cuyo estado 'activo' cambió
         const permisosModificados = rolActual.permisos.filter(pActual => {
           const pOriginal = rolOriginal.permisos.find(p => p.id_permiso === pActual.id_permiso);
           return pOriginal ? pOriginal.activo !== pActual.activo : true;
         });
 
-        // Si este rol tuvo al menos un cambio, lo agregamos al payload de envío
         if (permisosModificados.length > 0) {
           payloadCambios.push({
             id_rol: rolActual.id_rol,
@@ -126,23 +128,27 @@ export class GestionRoles implements OnInit {
 
   guardarCambios() {
     const url = `${environment.apiUrl}/administradores/actualizarMatriz`;
-    const payload = this.obtenerCambios(); // Extraemos solo lo modificado
+    const payload = this.obtenerCambios();
 
-    console.log('Enviando al servidor SOLO lo modificado:', payload);
+    if (payload.length === 0) return;
 
-    if (payload.length === 0) return; // Por seguridad, si no hay cambios no hace la petición
-    console.log(payload)
+    this.loadingGuardar.set(true); // Iniciamos el estado de carga
+
     this.http.put(url, payload, { withCredentials: true }).subscribe({
       next: () => {
-        alert('Configuración de seguridad guardada correctamente.');
-        // Sincronizamos para que el nuevo estado sea el "original"
+        this.loadingGuardar.set(false);
         this.rolesOriginales.set(JSON.stringify(this.roles()));
+        this.abrirModalExito('Configuración de seguridad guardada correctamente.');
       },
-      error: () => alert('Error al guardar la matriz.')
+      error: (err) => {
+        this.loadingGuardar.set(false);
+        const errorMsg = err.error?.message || err.error?.error || 'Error al guardar la configuración en el servidor.';
+        this.abrirModalError(errorMsg);
+      }
     });
   }
 
-  // --- Modal ---
+  // --- Modal de Crear Rol ---
   abrirModal() {
     this.nuevoRolNombre = '';
     this.mostrarModal.set(true);
@@ -169,5 +175,27 @@ export class GestionRoles implements OnInit {
 
     this.roles.update(actuales => [...actuales, nuevoRol]);
     this.cerrarModal();
+    this.abrirModalExito(`El rol "${this.nuevoRolNombre}" fue agregado. Recuerda hacer clic en "Guardar cambios" para aplicarlo.`);
+  }
+
+  // --- NUEVO: Controladores de Modales de Alerta ---
+  abrirModalExito(mensaje: string) {
+    this.modalMessage.set(mensaje);
+    this.showSuccessModal.set(true);
+    
+    // Auto cerrar el modal de éxito después de 3 segundos
+    setTimeout(() => {
+      this.showSuccessModal.set(false);
+    }, 3000);
+  }
+
+  abrirModalError(mensaje: string) {
+    this.modalMessage.set(mensaje);
+    this.showErrorModal.set(true);
+  }
+
+  cerrarModalAlerta() {
+    this.showSuccessModal.set(false);
+    this.showErrorModal.set(false);
   }
 }

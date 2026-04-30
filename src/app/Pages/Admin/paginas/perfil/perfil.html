@@ -62,41 +62,67 @@
     </div>
   </div>
 
-  <div class="acciones" style="margin-top: 2rem;">
-    <button class="btn-editar" (click)="abrirModalPassword()" style="background-color: #607d8b;">Cambiar Contraseña</button>
+  <div class="acciones-perfil">
+    <button class="btn-seguridad" (click)="abrirModalPassword()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+      Cambiar Contraseña
+    </button>
   </div>
-</div>
-
-<!-- Modal Cambiar Contraseña -->
+  <!-- Modal Cambiar Contraseña Mejorado -->
 <div class="modal-overlay" *ngIf="showPasswordModal">
-  <div class="modal" style="max-width: 500px; margin: 0 auto;">
+  <div class="modal-moderno">
     <div class="modal-header">
-      <h2 class="modal-title">Nueva Contraseña</h2>
-      <button class="modal-close" (click)="cerrarModalPassword()">×</button>
+      <div class="modal-icon-bg">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <button class="modal-close" aria-label="Cerrar modal" (click)="cerrarModalPassword()">×</button>
     </div>
     
     <div class="modal-content">
-      <p style="margin-bottom: 20px; color: #6c757d; font-size: 1.1rem; line-height: 1.5;">Ingresa tu nueva contraseña. Debe ser segura y tener al menos 12 caracteres.</p>
+      <h2 class="modal-title">Actualizar Contraseña</h2>
+      <p class="modal-subtitle">Ingresa una nueva contraseña segura. Te recomendamos usar letras, números y símbolos.</p>
       
       <form [formGroup]="passwordForm" (ngSubmit)="cambiarPassword()">
         <div class="campo">
-          <input type="password" formControlName="nueva_contrasena" placeholder="Nueva contraseña" />
-          <small *ngIf="pf['nueva_contrasena'].touched && pf['nueva_contrasena'].invalid" style="color: red; display: block; margin-top: 5px;">Mínimo 12 caracteres requeridos</small>
+          <label>Nueva contraseña</label>
+          <input type="password" formControlName="nueva_contrasena" placeholder="Mínimo 12 caracteres" [class.input-error]="pf['nueva_contrasena'].touched && pf['nueva_contrasena'].invalid" />
+          <div class="error-msg" *ngIf="pf['nueva_contrasena'].touched && pf['nueva_contrasena'].invalid">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <span>Mínimo 12 caracteres requeridos</span>
+          </div>
         </div>
         
         <div class="campo">
-          <input type="password" formControlName="confirmar_contrasena" placeholder="Confirmar contraseña" />
+          <label>Confirmar contraseña</label>
+          <input type="password" formControlName="confirmar_contrasena" placeholder="Repite la contraseña" />
         </div>
         
-        <div *ngIf="passwordError" style="color: red; margin-bottom: 20px; text-align: center; font-weight: 500;">{{ passwordError }}</div>
-        <div *ngIf="passwordSuccess" style="color: green; margin-bottom: 20px; text-align: center; font-weight: 500;">{{ passwordSuccess }}</div>
+        <!-- Alertas de estado -->
+        <div class="alerta alerta--error" *ngIf="passwordError">
+           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          {{ passwordError }}
+        </div>
+        <div class="alerta alerta--success" *ngIf="passwordSuccess">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          {{ passwordSuccess }}
+        </div>
         
-        <div class="acciones" style="padding: 0; margin-top: 10px;">
-          <button type="submit" class="btn-editar" [disabled]="loadingPassword || passwordForm.invalid" style="width: 100%;">
-            {{ loadingPassword ? 'Guardando…' : 'Cambiar Contraseña' }}
+        <div class="modal-actions-footer">
+          <button type="button" class="btn-cancelar" (click)="cerrarModalPassword()">Cancelar</button>
+          <button type="submit" class="btn-guardar" [disabled]="loadingPassword || passwordForm.invalid">
+            <span class="spinner" *ngIf="loadingPassword"></span>
+            {{ loadingPassword ? 'Actualizando...' : 'Actualizar' }}
           </button>
         </div>
       </form>
     </div>
   </div>
 </div>
+</div>
+

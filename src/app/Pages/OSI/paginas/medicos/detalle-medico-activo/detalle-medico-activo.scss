@@ -330,3 +330,113 @@ p {
     box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
   }
 }
+/* ==========================================================================
+   MODALES DE ALERTA (Éxito y Error)
+   ========================================================================== */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  animation: fadeIn 0.25s ease;
+}
+
+.modal-alerta-bg {
+  z-index: 200; 
+}
+
+.modal-alerta {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  width: 360px;
+  max-width: 90%;
+  z-index: 201;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+
+  .close-alerta {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.2s;
+    &:hover { color: $ink; }
+  }
+
+  .alerta-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    
+    &.success-bg {
+      background-color: #e8f5e9; 
+      color: #2e7d32; 
+    }
+
+    &.error-bg {
+      background-color: #ffebee; 
+      color: #c62828; 
+    }
+  }
+
+  .alerta-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0 0 0.8rem 0;
+    color: $ink;
+  }
+
+  .alerta-message {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: $muted;
+    margin: 0;
+  }
+
+  .btn-entendido {
+    margin-top: 1.8rem;
+    width: 100%;
+    background: #f3f4f6;
+    border: 1px solid rgba($border, 0.4);
+    color: $ink;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #e2e8f0;
+    }
+  }
+}
+
+.modal-alerta--success {
+  border-top: 6px solid #2e7d32;
+}
+.modal-alerta--error {
+  border-top: 6px solid #c62828;
+}
+
+@keyframes bounceIn {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}

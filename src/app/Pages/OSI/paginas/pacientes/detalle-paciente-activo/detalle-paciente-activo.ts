@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../../../environments/environment';
 
-// 🔹 1. Interfaz para la respuesta estandarizada
 export interface ApiResponse<T> {
   status: string;
   code: number;
@@ -14,7 +13,7 @@ export interface ApiResponse<T> {
 export interface PacienteResumen {
   id: number | string;
   id_usuario: string;
-  estado: boolean; // 👈 Usaremos esto para saber si está activo o suspendido
+  estado: boolean; 
   nombre: string;
   ci: string;
   fechaNac: String;
@@ -51,15 +50,18 @@ export class DetallePacienteActivo implements OnInit {
   paciente!: PacienteResumen;
   private http = inject(HttpClient);
 
-  // 🔹 2. Variable para manejar el estado de carga del botón
   loading = false;
+
+  // --- NUEVO: Lógica de Modales de Alerta ---
+  showSuccessModal = signal(false);
+  showErrorModal = signal(false);
+  modalMessage = signal('');
 
   ngOnInit() {
     this.paciente = history.state.paciente as PacienteResumen;
     console.log('Paciente completo recibido:', this.paciente);
   }
 
-  // 🔹 3. Método para suspender o activar al paciente dinámicamente
   toggleEstado() {
     if (!this.paciente) return;
 
@@ -76,13 +78,38 @@ export class DetallePacienteActivo implements OnInit {
         // Cambiamos el estado localmente para que la vista se actualice al instante
         this.paciente.estado = !this.paciente.estado;
         this.loading = false;
-        alert(res.message);
+        
+        // Reemplazamos el alert() nativo por nuestro modal de éxito
+        this.abrirModalExito(res.message);
       },
       error: (err) => {
         this.loading = false;
         const msg = err.error?.message || 'Error al procesar la solicitud';
-        alert('Error: ' + msg);
+        
+        // Reemplazamos el alert() nativo por nuestro modal de error
+        this.abrirModalError(msg);
       }
     });
+  }
+
+  // --- Controladores de Modales de Alerta ---
+  abrirModalExito(mensaje: string) {
+    this.modalMessage.set(mensaje);
+    this.showSuccessModal.set(true);
+    
+    // Auto cerrar el modal de éxito después de 3 segundos
+    setTimeout(() => {
+      this.showSuccessModal.set(false);
+    }, 3000);
+  }
+
+  abrirModalError(mensaje: string) {
+    this.modalMessage.set(mensaje);
+    this.showErrorModal.set(true);
+  }
+
+  cerrarModalAlerta() {
+    this.showSuccessModal.set(false);
+    this.showErrorModal.set(false);
   }
 }

@@ -341,3 +341,32 @@ $color-texto-secundario: #6c757d;
   padding: 40px;
   color: $color-texto-secundario;
 }
+
+/* Estilos de formulario para el modal */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+
+  label {
+    font-weight: 500;
+    color: $color-texto-secundario;
+  }
+
+  input {
+    padding: 12px 16px;
+    border: 1px solid $color-borde;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: $color-primario;
+      box-shadow: 0 0 0 3px rgba($color-primario, 0.1);
+      outline: none;
+    }
+  }
+}

@@ -24,6 +24,26 @@ export class Login implements OnInit {
   private fb = new FormBuilder();
   loading = signal(false);
 
+  // ==================== NUEVAS VARIABLES PARA RETRASO PROGRESIVO ====================
+  // Contador de intentos fallidos de LOGIN (credenciales incorrectas)
+  private failedLoginAttempts = 0;
+  
+  // Contador de intentos fallidos de CÓDIGO DE VERIFICACIÓN dentro de la misma sesión
+  private failedCodeAttemptsInSession = 0;
+  
+  // Bandera para saber si estamos en el primer error de código
+  private isFirstCodeError = true;
+  
+  // Variables para el retraso progresivo del LOGIN
+  isButtonDisabled = signal(false);
+  buttonText = signal('Ingresar');
+  private countdownInterval: any;
+  
+  // Modal específico para errores de código de verificación
+  showCodeErrorModal = signal(false);
+  codeErrorMessage = signal('');
+  // ==================== FIN NUEVAS VARIABLES ====================
+
   // Variables para los modales
   showVerificationModal = signal(false);
   showSuccessModal = signal(false);
@@ -46,6 +66,11 @@ export class Login implements OnInit {
   recoverEmail = '';
   recoverJwtToken = '';
 
+  // Variables para desbloqueo de cuenta
+  showUnlockPromptModal = signal(false);
+  showUnlockCodeModal = signal(false);
+  unlockEmail = '';
+
   recoverForm = this.fb.group({
     nueva_contrasena: ['', [Validators.required, Validators.minLength(12)]],
     confirmar_contrasena: ['', [Validators.required]]
@@ -63,15 +88,103 @@ export class Login implements OnInit {
     contrasena: ['', [Validators.required, Validators.minLength(3)]],
   });
 
-  canSubmit() {
-    return this.form.valid && !this.loading();
+  // ==================== MÉTODOS PARA RETRASO PROGRESIVO ====================
+  
+  // Método para calcular los segundos según intentos fallidos de LOGIN
+  private getDelaySeconds(): number {
+    if (this.failedLoginAttempts === 1) return 5;      // 1er error: 5 segundos
+    if (this.failedLoginAttempts === 2) return 7;      // 2do error: 7 segundos
+    return 10;  // 3er error y siguientes: 10 segundos
   }
 
+  // Inicia la cuenta regresiva para el botón de LOGIN
+  startCountdown(seconds: number) {
+    this.isButtonDisabled.set(true);
+    let currentSeconds = seconds;
+    this.buttonText.set(`Intentar de nuevo en ${currentSeconds}`);
+    
+    this.countdownInterval = setInterval(() => {
+      currentSeconds--;
+      if (currentSeconds > 0) {
+        this.buttonText.set(`Intentar de nuevo en ${currentSeconds}`);
+      } else {
+        this.buttonText.set('Ingresar');
+        this.isButtonDisabled.set(false);
+        clearInterval(this.countdownInterval);
+      }
+    }, 1000);
+  }
+
+  // Limpia la cuenta regresiva
+  private clearCountdown() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+      this.countdownInterval = null;
+    }
+    this.isButtonDisabled.set(false);
+    this.buttonText.set('Ingresar');
+  }
+
+  // Reinicia todos los contadores de intentos fallidos
+  private resetAllFailedAttempts() {
+    this.failedLoginAttempts = 0;
+    this.failedCodeAttemptsInSession = 0;
+    this.isFirstCodeError = true;
+  }
+
+  // Método específico para manejar error de código de verificación
+  private handleCodeVerificationError(errorMessage: string) {
+    this.failedCodeAttemptsInSession++;
+    
+    if (this.failedCodeAttemptsInSession === 1) {
+      // Primer error de código: solo mostrar modal y esperar 5 segundos
+      this.codeErrorMessage.set(errorMessage);
+      this.showCodeErrorModal.set(true);
+      this.loading.set(false);
+      
+      // Auto-cerrar el modal después de 2 segundos
+      setTimeout(() => {
+        this.showCodeErrorModal.set(false);
+      }, 2000);
+      
+    } else {
+      // Segundo o más errores de código: cuenta como fallo de login
+      this.failedLoginAttempts++;
+      console.log(`Código incorrecto por segunda vez. Fallo de login #${this.failedLoginAttempts}`);
+      
+      // Mostrar modal de error y cerrar el modal de verificación
+      this.errorMessage.set(`Código incorrecto repetido. ${errorMessage}`);
+      this.showErrorModal.set(true);
+      
+      // Cerrar el modal de verificación
+      this.showVerificationModal.set(false);
+      
+      // Limpiar credenciales
+      this.loginCredentials = null;
+      this.loading.set(false);
+      
+      // Reiniciar el contador de errores de código para la próxima vez
+      this.failedCodeAttemptsInSession = 0;
+      this.isFirstCodeError = true;
+    }
+  }
+  
+  // ==================== FIN MÉTODOS PARA RETRASO PROGRESIVO ====================
+
+  // MODIFICADO: Ahora incluye verificación de isButtonDisabled
+  canSubmit() {
+    return this.form.valid && !this.loading() && !this.isButtonDisabled();
+  }
+
+  // MODIFICADO: Ahora maneja los intentos fallidos y el retraso
   submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
+
+    // Limpiar cualquier cuenta regresiva previa
+    this.clearCountdown();
 
     this.loading.set(true);
 
@@ -81,7 +194,7 @@ export class Login implements OnInit {
     };
 
     // Llamada al endpoint que envía OTP
-    this.http.post<ApiResponse<any>>( // 🔹 2. Tipamos la respuesta
+    this.http.post<ApiResponse<any>>(
       environment.apiUrl + '/login',
       credentials,
       { withCredentials: true }
@@ -89,28 +202,76 @@ export class Login implements OnInit {
       .subscribe({
         next: (res) => {
           console.log('Respuesta login:', res);
+          
+          // NUEVO: Login exitoso - Reiniciamos todos los contadores
+          this.resetAllFailedAttempts();
+          
           this.loginCredentials = {
             correo: credentials.correo,
             contrasena: credentials.contrasena,
-            // 🔹 3. Extraemos el ID desde res.data
             id_usuario: res.data.id_usuario
           };
+          
+          // Reiniciar contador de errores de código para esta nueva sesión de verificación
+          this.failedCodeAttemptsInSession = 0;
+          this.isFirstCodeError = true;
 
           this.showVerificationModal.set(true);
           this.loading.set(false);
         },
         error: (err) => {
           console.error('Error de login:', err);
+          
+          // NUEVO: Incrementamos el contador de intentos fallidos de LOGIN
+          this.failedLoginAttempts++;
+          console.log(`Login fallido #${this.failedLoginAttempts}`);
 
-            this.showErrorModal.set(true);
-          // 🔹 4. Extraemos el mensaje de error estandarizado del backend
-            this.errorMessage.set(err.error?.message || 'Error al conectar con el servidor');
-            this.loading.set(false);
+          if (err.error?.code === 'PASSWORD_EXPIRED') {
+            this.recoverEmail = credentials.correo;
+            this.http.post<any>(environment.apiUrl + '/seguridad/recuperar-contrasena', { correo: this.recoverEmail }).subscribe({
+              next: () => {
+                this.showErrorModal.set(true);
+                this.errorMessage.set(err.error?.error || 'Tu contraseña ha expirado. Te hemos enviado un código para cambiarla.');
+
+                setTimeout(() => {
+                  this.showErrorModal.set(false);
+                  this.showRecoverCodeModal.set(true);
+                }, 2500);
+
+                this.loading.set(false);
+              },
+              error: (recoveryErr) => {
+                this.showErrorModal.set(true);
+                this.errorMessage.set('Error al solicitar cambio de contraseña: ' + (recoveryErr.error?.error || ''));
+                this.loading.set(false);
+              }
+            });
+            return;
           }
-        });
-    }
 
-  // Método para verificar el código y hacer el login real
+          if (err.error?.data?.code === 'UNLOCK_REQUIRED') {
+            this.unlockEmail = credentials.correo;
+            this.showUnlockPromptModal.set(true);
+            this.loading.set(false);
+            return;
+          }
+
+          if (err.error?.data?.code === 'ACCOUNT_BLOCKED_NOW') {
+            this.showErrorModal.set(true);
+            this.errorMessage.set('Tu cuenta ha sido bloqueada por múltiples intentos fallidos.');
+            this.loading.set(false);
+            return;
+          }
+
+          this.showErrorModal.set(true);
+          // Extraemos el mensaje de error estandarizado del backend
+          this.errorMessage.set(err.error?.message || 'Error al conectar con el servidor');
+          this.loading.set(false);
+        }
+      });
+  }
+
+  // MODIFICADO: Ahora maneja errores de código con el sistema progresivo
   verifyAndLogin(codeInput: HTMLInputElement) {
     const codigo = codeInput.value.trim();
 
@@ -121,11 +282,11 @@ export class Login implements OnInit {
       return;
     }
 
-      if (!codigo || codigo.length !== 6) {
-        this.showErrorModal.set(true);
-        this.errorMessage.set('Ingresa un código válido de 6 dígitos');
-        return;
-      }
+    if (!codigo || codigo.length !== 6) {
+      // NUEVO: Usar el manejador de errores de código
+      this.handleCodeVerificationError('Ingresa un código válido de 6 dígitos');
+      return;
+    }
 
     this.loading.set(true);
 
@@ -135,9 +296,11 @@ export class Login implements OnInit {
     }, { withCredentials: true }).subscribe({
       next: (res) => {
         console.log('Login completado con OTP:', res);
+        
+        // NUEVO: Login exitoso - Reiniciamos todos los contadores
+        this.resetAllFailedAttempts();
 
-        // 🔹 5. Ajuste flexible para leer los datos del usuario (asumiendo que verify-otp también está estandarizado)
-        // Si tu backend manda res.data.usuario, usa ese, si manda las propiedades directo en res.data, usa res.data
+        // Ajuste flexible para leer los datos del usuario
         const usuarioData = res.data.usuario || res.data;
         console.log(usuarioData)
         localStorage.setItem('id_usuario', usuarioData.id_usuario);
@@ -167,17 +330,16 @@ export class Login implements OnInit {
           }
         }, 2000);
 
-          this.loading.set(false);
-        },
-        error: (err) => {
-          console.error('Error de verificación OTP:', err);
-          this.showErrorModal.set(true);
-        // 🔹 6. Manejo del error para el OTP
-          this.errorMessage.set(err.error?.message || 'Código incorrecto o expirado');
-          this.loading.set(false);
-        }
-      });
-    }
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Error de verificación OTP:', err);
+        
+        // NUEVO: Usar el manejador de errores de código
+        this.handleCodeVerificationError(err.error?.message || 'Código incorrecto o expirado');
+      }
+    });
+  }
 
   // --- MÉTODOS DE RECUPERACIÓN DE CONTRASEÑA ---
 
@@ -282,10 +444,14 @@ export class Login implements OnInit {
     this.recoverForm.reset();
   }
 
-  // Método para cancelar y limpiar credenciales
+  // MODIFICADO: Ahora limpia las credenciales y reinicia contadores de código
   cancelVerification() {
     this.showVerificationModal.set(false);
     this.loginCredentials = null;
+    this.clearCountdown();
+    // Reiniciamos solo los contadores de código, no los de login
+    this.failedCodeAttemptsInSession = 0;
+    this.isFirstCodeError = true;
   }
 
   // Método para cerrar modal de éxito inmediatamente
@@ -293,10 +459,75 @@ export class Login implements OnInit {
     this.showSuccessModal.set(false);
   }
 
-  // Método para cerrar modal de error
+  // MODIFICADO: Cierra modal de error y activa cuenta regresiva progresiva
   closeErrorModal() {
     this.showErrorModal.set(false);
     this.errorMessage.set('');
+    
+    // Calculamos los segundos según los intentos fallidos de LOGIN
+    const delaySeconds = this.getDelaySeconds();
+    console.log(`Esperando ${delaySeconds} segundos (intento fallido #${this.failedLoginAttempts})`);
+    
+    // Iniciar cuenta regresiva para el botón de LOGIN
+    this.startCountdown(delaySeconds);
+  }
+  
+  // NUEVO: Método para cerrar el modal de error de código de verificación
+  closeCodeErrorModal() {
+    this.showCodeErrorModal.set(false);
+    this.codeErrorMessage.set('');
+    // No hay cuenta regresiva aquí, solo se cierra el modal
+  }
+
+  // --- MÉTODOS DE DESBLOQUEO DE CUENTA ---
+
+  solicitarDesbloqueo() {
+    this.loading.set(true);
+    this.http.post<any>(environment.apiUrl + '/seguridad/solicitar-desbloqueo', { correo: this.unlockEmail }).subscribe({
+      next: (res) => {
+        this.showUnlockPromptModal.set(false);
+        this.showUnlockCodeModal.set(true);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.showUnlockPromptModal.set(false);
+        this.showErrorModal.set(true);
+        this.errorMessage.set(err.error?.error || err.error?.message || 'Error al solicitar desbloqueo');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  confirmarDesbloqueo(codeInput: HTMLInputElement) {
+    const codigo = codeInput.value.trim();
+    if (!codigo || codigo.length !== 6) {
+      this.showErrorModal.set(true);
+      this.errorMessage.set('Ingresa un código válido de 6 dígitos');
+      return;
+    }
+    this.loading.set(true);
+    this.http.post<any>(environment.apiUrl + '/seguridad/confirmar-desbloqueo', {
+      correo: this.unlockEmail,
+      codigo
+    }).subscribe({
+      next: (res) => {
+        this.showUnlockCodeModal.set(false);
+        this.showSuccessModal.set(true);
+        setTimeout(() => this.showSuccessModal.set(false), 3000);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.showErrorModal.set(true);
+        this.errorMessage.set(err.error?.error || err.error?.message || 'Código incorrecto o expirado');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  cancelarDesbloqueo() {
+    this.showUnlockPromptModal.set(false);
+    this.showUnlockCodeModal.set(false);
+    this.unlockEmail = '';
   }
 
   // Métodos para redirección a registros
@@ -310,7 +541,17 @@ export class Login implements OnInit {
 
   get f() { return this.form.controls; }
 
+  // MODIFICADO: Inicialización de contadores
   ngOnInit(): void {
     localStorage.clear();
+    // Inicializamos todos los contadores
+    this.failedLoginAttempts = 0;
+    this.failedCodeAttemptsInSession = 0;
+    this.isFirstCodeError = true;
+  }
+
+  // Limpiar intervalo cuando el componente se destruya
+  ngOnDestroy(): void {
+    this.clearCountdown();
   }
 }

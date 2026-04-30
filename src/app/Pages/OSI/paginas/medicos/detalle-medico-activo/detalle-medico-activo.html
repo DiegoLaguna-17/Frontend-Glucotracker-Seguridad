@@ -61,4 +61,15 @@
     <h3>Admitido por</h3>
     <p>{{ medico.admitidoPor }}</p>
   </div>
+  <div class="actions-container">
+    <button class="btn" [class.btn-danger]="medico.estado" [class.btn-success]="!medico.estado" [disabled]="loading"
+      type="button" (click)="toggleEstado()">
+
+      <span *ngIf="loading">Procesando...</span>
+      <span *ngIf="!loading">
+        {{ medico.estado ? 'Suspender Médico' : 'Activar Médico' }}
+      </span>
+
+    </button>
+  </div>
 </div>

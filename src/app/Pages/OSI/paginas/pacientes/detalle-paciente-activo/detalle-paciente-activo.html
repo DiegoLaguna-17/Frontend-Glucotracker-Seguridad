@@ -8,7 +8,9 @@
     </div>
     <div class="perfil-info">
       <h1 class="nombre">{{ paciente.nombre }}</h1>
-      <span class="chip-status">Paciente Activo</span>
+      <span class="chip-status" [class.suspendido]="!paciente.estado">
+        {{ paciente.estado ? 'Paciente Activo' : 'Paciente Suspendido' }}
+      </span>
     </div>
   </header>
 
@@ -98,4 +100,15 @@
       <h3>{{ paciente.admitidoPor }}</h3>
     </div>
   </footer>
+  <div class="actions-container">
+    <button class="btn" [class.btn-danger]="paciente.estado" [class.btn-success]="!paciente.estado" [disabled]="loading"
+      type="button" (click)="toggleEstado()">
+
+      <span *ngIf="loading">Procesando...</span>
+      <span *ngIf="!loading">
+        {{ paciente.estado ? 'Suspender Paciente' : 'Activar Paciente' }}
+      </span>
+
+    </button>
+  </div>
 </div>

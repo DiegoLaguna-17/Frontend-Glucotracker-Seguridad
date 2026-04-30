@@ -71,7 +71,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms'; // <-- IMPORTANTE para los checkboxes
 import { environment } from '../../../../../../environments/environment';
-
+import { MatDialog } from '@angular/material/dialog';
+import { ModalGenericoComponent } from '../../../../../../shared/components/modals/success';
 // Actualizamos tu interfaz para incluir los permisos
 export interface PerfilAdmin {
   id: string;
@@ -100,6 +101,7 @@ export interface PerfilAdmin {
 export class AdminsActivos implements OnInit {
   private router = inject(Router);
   private http = inject(HttpClient); // Inyección con el estilo moderno de Angular
+  private dialog = inject(MatDialog);
 
   administradores = signal<PerfilAdmin[]>([]);
   q = signal<string>('');
@@ -146,6 +148,13 @@ export class AdminsActivos implements OnInit {
         this.hayCambios = false;
       },
       error: (err) => {
+         this.dialog.open(ModalGenericoComponent, {
+            width: '400px',
+            data: {
+              tipo: 'error',
+              mensaje: err.error.message || 'Error al activar la cuenta'
+            }
+          });
         console.log('error ', err);
       }
     });
@@ -158,7 +167,17 @@ export class AdminsActivos implements OnInit {
     this.http.post(`${environment.apiUrl}/administradores/actualizar-permisos`, data, {
       withCredentials: true
     }).subscribe({
-      next: () => console.log('Permisos actualizados'),
+      next: (res: any) => {
+         this.dialog.open(ModalGenericoComponent, {
+            width: '400px',
+            data: {
+              tipo: 'success',
+              mensaje: res.message || 'Permisos actualizados exitosamente'
+            }
+          });
+         this.cargarAdmins(); // Recargar para actualizar la vista y resetear cambios
+          
+      },
       error: (err) => console.error(err)
     });
   }

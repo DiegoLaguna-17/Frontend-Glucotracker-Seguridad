@@ -1,0 +1,57 @@
+<div class="modal-container">
+
+  <span class="tag-tipo" [ngClass]="'tag-' + data.tipo">
+    {{ data.tipo === 'success' ? 'Éxito' : data.tipo === 'update' ? 'Actualización' : 'Eliminación' }}
+  </span>
+
+  <div class="icon-circle" [ngClass]="{
+    'bg-success': data.tipo === 'success',
+    'bg-info':    data.tipo === 'update',
+    'bg-danger':  data.tipo === 'delete'
+  }">
+    <svg *ngIf="data.tipo === 'success'" width="32" height="32" viewBox="0 0 24 24" fill="none"
+      stroke="#0a3d62" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <svg *ngIf="data.tipo === 'update'" width="32" height="32" viewBox="0 0 24 24" fill="none"
+      stroke="#185fa5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="23 4 23 10 17 10"></polyline>
+      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+    </svg>
+    <svg *ngIf="data.tipo === 'delete'" width="32" height="32" viewBox="0 0 24 24" fill="none"
+      stroke="#a32d2d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="3 6 5 6 21 6"></polyline>
+      <path d="M19 6l-1 14H6L5 6"></path>
+      <path d="M10 11v6"></path>
+      <path d="M14 11v6"></path>
+      <path d="M9 6V4h6v2"></path>
+    </svg>
+  </div>
+
+  <h2 mat-dialog-title [ngClass]="{
+    't-success': data.tipo === 'success',
+    't-update':  data.tipo === 'update',
+    't-delete':  data.tipo === 'delete'
+  }">
+    {{ data.tipo === 'success' ? '¡Operación exitosa!' :
+       data.tipo === 'update'  ? '¡Registro actualizado!' :
+       '¡Registro eliminado!' }}
+  </h2>
+
+  <div class="divider"></div>
+
+  <mat-dialog-content>
+    <p>{{ data.mensaje }}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="center">
+    <button class="btn-confirm" [ngClass]="{
+      'btn-success': data.tipo === 'success',
+      'btn-update':  data.tipo === 'update',
+      'btn-delete':  data.tipo === 'delete'
+    }" (click)="cerrar()">
+      Aceptar
+    </button>
+  </mat-dialog-actions>
+
+</div>

@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalGenericoComponent } from '../../../../../shared/components/modals/success'; // Asegúrate de que la ruta sea correcta
 environment
 @Component({
   selector: 'app-detalle-solicitud',
@@ -16,7 +18,7 @@ export class DetalleSolicitud implements OnInit {
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
   private router = inject(Router);
-
+  private dialog = inject(MatDialog);
   // Datos de la solicitud recibidos por la navegación
   solicitudPendiente: any = null;
 
@@ -181,17 +183,31 @@ export class DetalleSolicitud implements OnInit {
     this.http.put(`${environment.apiUrl}/administradores/activar-cuenta`, formData, { withCredentials: true })
       .subscribe({
         next: (res: any) => {
-          alert(res.message);
-          this.router.navigate(['administradores/solicitudes-pendientes']); // Volver a la lista
+          const dialogRef = this.dialog.open(ModalGenericoComponent, { 
+            width: '400px',
+            data: {
+              tipo: 'success',
+              mensaje: res.message || 'Cuenta activada exitosamente'
+            }
+          });
+          dialogRef.afterClosed().subscribe(() => {
+            this.router.navigate(['/administrador/solicitudes-pendientes']);
+        });
         },
         error: (err) => {
-          alert(err.error.message || 'Error al activar la cuenta');
+          this.dialog.open(ModalGenericoComponent, {
+            width: '400px',
+            data: {
+              tipo: 'error',
+              mensaje: err.error.message || 'Error al activar la cuenta'
+            }
+          });
           console.error(err);
         }
       });
   }
 
   volver() {
-    this.router.navigate(['administrador/solicitudes']);
+    this.router.navigate(['/administrador/solicitudes-pendientes']);
   }
 }

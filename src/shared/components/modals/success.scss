@@ -1,0 +1,93 @@
+$color-navy:       #0a3d62;
+$color-cyan:       #5ab0c9;
+$color-mint:       #7fffd4;
+$color-blue:       #185fa5;
+$color-blue-light: #b5d4f4;
+$color-red:        #a32d2d;
+$color-red-light:  #f7c1c1;
+
+.modal-container {
+  padding: 28px 24px 24px;
+  min-width: 340px;
+  max-width: 420px;
+  text-align: center;
+  border-radius: 20px;
+}
+
+.tag-tipo {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+
+  &.tag-success { background: $color-mint;       color: #085041; }
+  &.tag-update  { background: $color-blue-light; color: #0c447c; }
+  &.tag-delete  { background: $color-red-light;  color: #791f1f; }
+}
+
+.icon-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+
+  &.bg-success { background: $color-mint;       border: 2.5px solid $color-navy; }
+  &.bg-info    { background: $color-blue-light; border: 2.5px solid $color-blue; }
+  &.bg-danger  { background: $color-red-light;  border: 2.5px solid $color-red;  }
+}
+
+h2[mat-dialog-title] {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+
+  &.t-success { color: $color-navy; }
+  &.t-update  { color: $color-blue; }
+  &.t-delete  { color: $color-red;  }
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(90, 176, 201, 0.25);
+  margin: 12px 0;
+}
+
+mat-dialog-content {
+  p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 8px 0 0;
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 0 4px !important;
+  margin: 0 !important;
+
+  .btn-confirm {
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.2s ease, transform 0.15s ease;
+
+    &.btn-success { background: $color-navy;  color: $color-mint;       }
+    &.btn-update  { background: $color-blue;  color: $color-blue-light; }
+    &.btn-delete  { background: $color-red;   color: $color-red-light;  }
+
+    &:hover  { filter: brightness(1.12); }
+    &:active { transform: scale(0.97);   }
+  }
+}

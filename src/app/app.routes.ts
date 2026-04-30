@@ -128,7 +128,7 @@ export const routes: Routes = [
         path: 'osi', loadComponent: () => import('./Pages/OSI/osi-shell/osi-shell').then(m => m.OsiShell),
         children: [
             {
-                path: '', pathMatch: 'full', redirectTo: 'permisos'
+                path: '', pathMatch: 'full', redirectTo: 'roles'
             },
             {
                 path: 'permisos', loadComponent: () => import('./Pages/OSI/paginas/gestion-permisos/gestion-permisos').then(m => m.GestionPermisos)

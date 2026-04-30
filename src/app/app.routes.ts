@@ -130,9 +130,7 @@ export const routes: Routes = [
             {
                 path: '', pathMatch: 'full', redirectTo: 'roles'
             },
-            {
-                path: 'permisos', loadComponent: () => import('./Pages/OSI/paginas/gestion-permisos/gestion-permisos').then(m => m.GestionPermisos)
-            },
+
             {
                 path: 'roles', loadComponent: () => import('./Pages/OSI/paginas/gestion-roles/gestion-roles').then(m => m.GestionRoles)
             },

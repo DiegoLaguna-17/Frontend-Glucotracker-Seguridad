@@ -234,3 +234,45 @@
     </div>
   </div>
 </div>
+
+<!-- Modal 4: Prompt Solicitar Desbloqueo -->
+<div class="modal-overlay" *ngIf="showUnlockPromptModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Cuenta Bloqueada</h2>
+      <button class="modal-close" (click)="cancelarDesbloqueo()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-icon" style="color: #f44336; font-size: 3rem; text-align: center; margin-bottom: 1rem;">!</div>
+      <p class="modal-description">Tu cuenta ha sido bloqueada por múltiples intentos fallidos. Puedes solicitar un código de desbloqueo a tu correo registrado.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal btn-modal--primary" (click)="solicitarDesbloqueo()" [disabled]="loading()">
+          {{ loading() ? 'Enviando…' : 'Solicitar Desbloqueo' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 5: Verificar Código de Desbloqueo -->
+<div class="modal-overlay" *ngIf="showUnlockCodeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Desbloquear Cuenta</h2>
+      <button class="modal-close" (click)="cancelarDesbloqueo()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <p class="modal-description">Se ha enviado un código de desbloqueo a tu correo. Ingrésalo a continuación para reactivar tu cuenta.</p>
+      <div class="field">
+        <input type="text" placeholder="- - - - - -" maxlength="6" class="verification-input" #unlockCodeInput />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal btn-modal--primary" (click)="confirmarDesbloqueo(unlockCodeInput)" [disabled]="loading()">
+          {{ loading() ? 'Verificando…' : 'Desbloquear Cuenta' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

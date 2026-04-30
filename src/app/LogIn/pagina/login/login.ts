@@ -46,6 +46,11 @@ export class Login implements OnInit {
   recoverEmail = '';
   recoverJwtToken = '';
 
+  // Variables para desbloqueo de cuenta
+  showUnlockPromptModal = signal(false);
+  showUnlockCodeModal = signal(false);
+  unlockEmail = '';
+
   recoverForm = this.fb.group({
     nueva_contrasena: ['', [Validators.required, Validators.minLength(12)]],
     confirmar_contrasena: ['', [Validators.required]]
@@ -102,13 +107,50 @@ export class Login implements OnInit {
         error: (err) => {
           console.error('Error de login:', err);
 
-            this.showErrorModal.set(true);
-          // 🔹 4. Extraemos el mensaje de error estandarizado del backend
-            this.errorMessage.set(err.error?.message || 'Error al conectar con el servidor');
-            this.loading.set(false);
+          if (err.error?.code === 'PASSWORD_EXPIRED') {
+            this.recoverEmail = credentials.correo;
+            this.http.post<any>(environment.apiUrl + '/seguridad/recuperar-contrasena', { correo: this.recoverEmail }).subscribe({
+              next: () => {
+                this.showErrorModal.set(true);
+                this.errorMessage.set(err.error?.error || 'Tu contraseña ha expirado. Te hemos enviado un código para cambiarla.');
+
+                setTimeout(() => {
+                  this.showErrorModal.set(false);
+                  this.showRecoverCodeModal.set(true);
+                }, 2500);
+
+                this.loading.set(false);
+              },
+              error: (recoveryErr) => {
+                this.showErrorModal.set(true);
+                this.errorMessage.set('Error al solicitar cambio de contraseña: ' + (recoveryErr.error?.error || ''));
+                this.loading.set(false);
+              }
+            });
+            return;
           }
-        });
-    }
+
+          if (err.error?.data?.code === 'UNLOCK_REQUIRED') {
+            this.unlockEmail = credentials.correo;
+            this.showUnlockPromptModal.set(true);
+            this.loading.set(false);
+            return;
+          }
+
+          if (err.error?.data?.code === 'ACCOUNT_BLOCKED_NOW') {
+            this.showErrorModal.set(true);
+            this.errorMessage.set('Tu cuenta ha sido bloqueada por múltiples intentos fallidos.');
+            this.loading.set(false);
+            return;
+          }
+
+          this.showErrorModal.set(true);
+          // 🔹 4. Extraemos el mensaje de error estandarizado del backend
+          this.errorMessage.set(err.error?.message || err.error?.error || 'Error al conectar con el servidor');
+          this.loading.set(false);
+        }
+      });
+  }
 
   // Método para verificar el código y hacer el login real
   verifyAndLogin(codeInput: HTMLInputElement) {
@@ -121,11 +163,11 @@ export class Login implements OnInit {
       return;
     }
 
-      if (!codigo || codigo.length !== 6) {
-        this.showErrorModal.set(true);
-        this.errorMessage.set('Ingresa un código válido de 6 dígitos');
-        return;
-      }
+    if (!codigo || codigo.length !== 6) {
+      this.showErrorModal.set(true);
+      this.errorMessage.set('Ingresa un código válido de 6 dígitos');
+      return;
+    }
 
     this.loading.set(true);
 
@@ -167,17 +209,17 @@ export class Login implements OnInit {
           }
         }, 2000);
 
-          this.loading.set(false);
-        },
-        error: (err) => {
-          console.error('Error de verificación OTP:', err);
-          this.showErrorModal.set(true);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Error de verificación OTP:', err);
+        this.showErrorModal.set(true);
         // 🔹 6. Manejo del error para el OTP
-          this.errorMessage.set(err.error?.message || 'Código incorrecto o expirado');
-          this.loading.set(false);
-        }
-      });
-    }
+        this.errorMessage.set(err.error?.message || 'Código incorrecto o expirado');
+        this.loading.set(false);
+      }
+    });
+  }
 
   // --- MÉTODOS DE RECUPERACIÓN DE CONTRASEÑA ---
 
@@ -297,6 +339,57 @@ export class Login implements OnInit {
   closeErrorModal() {
     this.showErrorModal.set(false);
     this.errorMessage.set('');
+  }
+
+  // --- MÉTODOS DE DESBLOQUEO DE CUENTA ---
+
+  solicitarDesbloqueo() {
+    this.loading.set(true);
+    this.http.post<any>(environment.apiUrl + '/seguridad/solicitar-desbloqueo', { correo: this.unlockEmail }).subscribe({
+      next: (res) => {
+        this.showUnlockPromptModal.set(false);
+        this.showUnlockCodeModal.set(true);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.showUnlockPromptModal.set(false);
+        this.showErrorModal.set(true);
+        this.errorMessage.set(err.error?.error || err.error?.message || 'Error al solicitar desbloqueo');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  confirmarDesbloqueo(codeInput: HTMLInputElement) {
+    const codigo = codeInput.value.trim();
+    if (!codigo || codigo.length !== 6) {
+      this.showErrorModal.set(true);
+      this.errorMessage.set('Ingresa un código válido de 6 dígitos');
+      return;
+    }
+    this.loading.set(true);
+    this.http.post<any>(environment.apiUrl + '/seguridad/confirmar-desbloqueo', {
+      correo: this.unlockEmail,
+      codigo
+    }).subscribe({
+      next: (res) => {
+        this.showUnlockCodeModal.set(false);
+        this.showSuccessModal.set(true);
+        setTimeout(() => this.showSuccessModal.set(false), 3000);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.showErrorModal.set(true);
+        this.errorMessage.set(err.error?.error || err.error?.message || 'Código incorrecto o expirado');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  cancelarDesbloqueo() {
+    this.showUnlockPromptModal.set(false);
+    this.showUnlockCodeModal.set(false);
+    this.unlockEmail = '';
   }
 
   // Métodos para redirección a registros

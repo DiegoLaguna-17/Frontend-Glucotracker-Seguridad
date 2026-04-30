@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { environment } from '../../../../../environments/environment';
 
 // 🔹 1. Agregamos la interfaz genérica para manejar tus nuevas respuestas del backend
@@ -28,7 +29,7 @@ export interface PerfilModelo {
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, ReactiveFormsModule],
   templateUrl: './perfil.html',
   styleUrl: './perfil.scss',
 })
@@ -36,6 +37,7 @@ export class Perfil implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private sanitizer = inject(DomSanitizer);
+  private fb = inject(FormBuilder);
 
   pdf?: SafeResourceUrl;
   medico?: PerfilModelo;
@@ -43,6 +45,18 @@ export class Perfil implements OnInit {
   // Variables para modales
   showCarnetModal = false;
   showMatriculaModal = false;
+
+  showPasswordModal = false;
+  loadingPassword = false;
+  passwordError = '';
+  passwordSuccess = '';
+
+  passwordForm = this.fb.group({
+    nueva_contrasena: ['', [Validators.required, Validators.minLength(12)]],
+    confirmar_contrasena: ['', [Validators.required]]
+  });
+
+  get pf() { return this.passwordForm.controls; }
 
   // IDs de usuario
   idUsuario = localStorage.getItem('id_usuario');
@@ -99,5 +113,50 @@ export class Perfil implements OnInit {
 
   cerrarMatriculaModal() {
     this.showMatriculaModal = false;
+  }
+
+  abrirModalPassword() {
+    this.showPasswordModal = true;
+    this.passwordError = '';
+    this.passwordSuccess = '';
+    this.passwordForm.reset();
+  }
+
+  cerrarModalPassword() {
+    this.showPasswordModal = false;
+  }
+
+  cambiarPassword() {
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+    
+    const nueva = this.passwordForm.value.nueva_contrasena;
+    const confirm = this.passwordForm.value.confirmar_contrasena;
+    
+    if (nueva !== confirm) {
+      this.passwordError = 'Las contraseñas no coinciden';
+      return;
+    }
+
+    this.loadingPassword = true;
+    this.passwordError = '';
+    
+    const id = localStorage.getItem('id_usuario');
+    
+    this.http.put<any>(`${environment.apiUrl}/usuario/${id}/password`, { contrasena: nueva }).subscribe({
+      next: (res) => {
+        this.passwordSuccess = 'Contraseña actualizada correctamente';
+        this.loadingPassword = false;
+        setTimeout(() => {
+          this.cerrarModalPassword();
+        }, 2000);
+      },
+      error: (err) => {
+        this.passwordError = err.error?.message || err.error?.error || 'Error al cambiar la contraseña';
+        this.loadingPassword = false;
+      }
+    });
   }
 }

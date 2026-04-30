@@ -70,7 +70,7 @@
       </label>
 
         <button class="btn-login" type="submit" [disabled]="!canSubmit()">
-          {{ loading() ? 'Ingresando…' : 'Ingresar' }}
+          {{ loading() ? 'Ingresando…' : buttonText() }}
         </button>
 
         <button
@@ -156,6 +156,28 @@
       </p>
       <div class="modal-actions">
         <button class="btn-modal btn-modal--error" (click)="closeErrorModal()">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de error para código de verificación - NUEVO -->
+<div class="modal-overlay" *ngIf="showCodeErrorModal()">
+  <div class="modal modal--error">
+    <div class="modal-header">
+      <h2 class="modal-title">Código Incorrecto</h2>
+      <button class="modal-close" (click)="closeCodeErrorModal()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-icon">!</div>
+      <p class="modal-description">
+        {{ codeErrorMessage() }}
+      </p>
+      <div class="modal-actions">
+        <button class="btn-modal btn-modal--error" (click)="closeCodeErrorModal()">
           Entendido
         </button>
       </div>

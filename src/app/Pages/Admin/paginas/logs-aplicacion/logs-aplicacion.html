@@ -1,0 +1,100 @@
+<div class="auditoria-container">
+  <header class="auditoria-header">
+    <h1 class="auditoria-title">Logs de Aplicación</h1>
+    <p class="auditoria-subtitle">Registro detallado de cambios y operaciones en la base de datos</p>
+  </header>
+  
+  <div class="auditoria-card">
+    <h2>Tabla de Logs</h2>
+
+    <table class="auditoria-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th> <th>Módulo</th>
+          <th>Acción</th>
+          <th>Descripción</th>
+          <th>Método</th>
+          <th>Código</th>
+          <th>Fecha</th>
+          <th>Detalles</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let log of logsPaginados">
+          <td data-label="ID">{{ log.id }}</td>
+          <td data-label="Usuario"><strong>{{ log.correo }}</strong></td>
+          <td data-label="Módulo">
+            <span class="badge badge-modulo">{{ log.modulo | uppercase }}</span>
+          </td>
+          <td data-label="Acción">
+            <span class="badge" [ngClass]="log.accion">{{ log.accion }}</span>
+          </td>
+          <td data-label="Descripción">{{ log.descripcion }}</td>
+          <td data-label="Método">{{ log.metodo }}</td>
+          <td data-label="Código">
+            <span [class.ok]="log.codigo_http >= 200 && log.codigo_http < 300" 
+                  [class.fail]="log.codigo_http >= 400">
+              {{ log.codigo_http }}
+            </span>
+          </td>
+          <td data-label="Fecha">{{ log.fecha | date:'short' }}</td>
+          <td data-label="Detalles">
+            <button class="btn-detalles" (click)="abrirModal(log)">
+              Ver Detalles
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="paginacion" *ngIf="logs.length > 0">
+      <button (click)="anterior()" [disabled]="paginaActual === 1">Anterior</button>
+      <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button (click)="siguiente()" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="modalVisible" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Detalles del Log #{{ logSeleccionado?.id }}</h3>
+        <button class="close-btn" (click)="cerrarModal()">✖</button>
+      </div>
+      
+      <div class="modal-body">
+        <p><strong>Usuario responsable:</strong> {{ logSeleccionado?.correo }}</p>
+        <p><strong>Endpoint:</strong> <span class="mono">{{ logSeleccionado?.endpoint }}</span></p>
+        <p><strong>IP Origen:</strong> {{ logSeleccionado?.ip_origen }}</p>
+        
+        <h4 class="mt-4">Cambios Registrados</h4>
+        
+        <div class="detalles-vacio" *ngIf="logSeleccionado?.detalles?.length === 0">
+          No hay detalles específicos registrados para esta acción.
+        </div>
+
+        <table class="detalles-table" *ngIf="logSeleccionado?.detalles?.length! > 0">
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th *ngIf="tieneValoresAnteriores()">Valor Anterior</th>
+              <th>Valor Nuevo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let det of logSeleccionado?.detalles">
+              <td><strong>{{ det.campo }}</strong> <br><small>({{ det.tipo }})</small></td>
+              
+              <td class="valor-anterior" *ngIf="tieneValoresAnteriores()">
+                {{ det.valor_anterior || 'N/A' }}
+              </td>
+              
+              <td class="valor-nuevo">{{ det.valor_entrante || 'N/A' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

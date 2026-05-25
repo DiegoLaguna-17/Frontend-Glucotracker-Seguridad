@@ -96,7 +96,7 @@ export class RegistrarGlucosa implements OnInit {
   obtenerDatosPaciente(){
     this.http.get<any>(`${environment.apiUrl}/registro/datosGlucosa/`+this.paciente.id,{withCredentials:true}).subscribe({
       next:(data)=>{
-        this.datosPaciente=data;
+        this.datosPaciente=data.data;
         console.log("Datos para registro",this.datosPaciente);
         if(this.datosPaciente){
           this.datosEnviar.id_medico=this.datosPaciente.id_medico;
@@ -149,10 +149,10 @@ export class RegistrarGlucosa implements OnInit {
 
       const datosParaBackend = {
         ...this.glucosaForm.value,
-        id_medico:localStorage.getItem("id_rol"),
+        id_medico: localStorage.getItem("id_rol"),
         fecha,
         hora,
-        id_paciente: this.datosPaciente.id_paciente
+        id_paciente: this.paciente.id
       };
 
       console.log('Datos a enviar al backend:', datosParaBackend);
@@ -167,7 +167,7 @@ export class RegistrarGlucosa implements OnInit {
 
       }
       this.datosEnviar.valor=datosParaBackend.nivel_glucosa;
-      console.log(this.datosEnviar)
+      console.log("datos a enviar", this.datosEnviar)
       this.respuesta=(this.glucosaService.evaluarGlucosa(this.datosEnviar.edad,this.datosEnviar.tipo,this.datosEnviar.momento,this.datosEnviar.valor));
       console.log(datosParaBackend)
       this.enviarAlBackend(datosParaBackend)
@@ -181,10 +181,10 @@ export class RegistrarGlucosa implements OnInit {
   enviarAlBackend(datos: any) {
   const url = `${environment.apiUrl}/medicos/registrar/glucosa`;
 
-  this.http.post<{ message: string; registro_glucosa: { id_registro: number } }>(url, datos,{withCredentials:true}).subscribe({
+  this.http.post<any>(url, datos,{withCredentials:true}).subscribe({
     next: (response) => {
       // Ahora TypeScript sabe que response tiene id_registro
-      this.idRegistroGlucosa = response.registro_glucosa.id_registro;
+      this.idRegistroGlucosa = response.data.id_registro;
 
       console.log('ID del registro guardado:', this.idRegistroGlucosa);
 

@@ -56,7 +56,7 @@ export class EditarMedico implements OnInit {
   constructor() {
     this.formMedico = this.fb.group({
       telefono: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]{8,}$/)]],
-      correo: ['', [Validators.required, Validators.email]],
+      correo: [{value:'', disabled:true}],
       departamento: ['La Paz', [Validators.required]]
     });
   }
@@ -150,9 +150,7 @@ export class EditarMedico implements OnInit {
   if (this.formMedico.get('telefono')?.dirty) {
     formData.append('telefono', this.formMedico.get('telefono')?.value);
   }
-  if (this.formMedico.get('correo')?.dirty) {
-    formData.append('correo', this.formMedico.get('correo')?.value);
-  }
+ 
   if (this.formMedico.get('departamento')?.dirty) {
     formData.append('departamento', this.formMedico.get('departamento')?.value);
   }

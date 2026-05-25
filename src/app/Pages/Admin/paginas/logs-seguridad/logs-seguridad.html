@@ -1,0 +1,100 @@
+<div class="auditoria-container">
+  <header class="auditoria-header">
+    <h1 class="auditoria-title">Auditoría de Seguridad</h1>
+    <p class="auditoria-subtitle">Registro de accesos, intentos de login y bloqueos de cuenta</p>
+  </header>
+  
+  <div class="auditoria-card">
+    <h2>Eventos de Seguridad</h2>
+
+    <table class="auditoria-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario / Rol</th>
+          <th>Evento</th>
+          <th>Descripción</th>
+          <th>Éxito</th>
+          <th>Fecha</th>
+          <th>Detalles</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let log of logsPaginados">
+          <td data-label="ID">{{ log.id }}</td>
+          <td data-label="Usuario / Rol">
+            <strong>{{ log.nombre_usuario }}</strong><br>
+            <small class="texto-secundario">{{ log.rol | uppercase }}</small>
+          </td>
+          <td data-label="Evento">
+            <span class="badge" [ngClass]="log.exito ? 'badge-success' : 'badge-danger'">
+              {{ log.evento }}
+            </span>
+          </td>
+          <td data-label="Descripción">{{ log.descripcion }}</td>
+          <td data-label="Éxito">
+            <span [class.ok]="log.exito" [class.fail]="!log.exito">
+              {{ log.exito ? '✔ ÉXITO' : '✖ FALLO' }}
+            </span>
+          </td>
+          <td data-label="Fecha">{{ log.fecha | date:'short' }}</td>
+          <td data-label="Detalles">
+            <button class="btn-detalles" (click)="abrirModal(log)">
+              Ver Detalles
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="paginacion" *ngIf="logs.length > 0">
+      <button (click)="anterior()" [disabled]="paginaActual === 1">Anterior</button>
+      <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button (click)="siguiente()" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="modalVisible" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Detalles del Evento #{{ logSeleccionado?.id }}</h3>
+        <button class="close-btn" (click)="cerrarModal()">✖</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Usuario Identificado:</strong>
+            <p>{{ logSeleccionado?.nombre_usuario }} <small>({{ logSeleccionado?.rol }})</small></p>
+          </div>
+          
+          <div class="info-item">
+            <strong>Email Usado en el Intento:</strong>
+            <p class="resaltado">{{ logSeleccionado?.email_intento }}</p>
+          </div>
+          
+          <div class="info-item">
+            <strong>Dirección IP:</strong>
+            <p>{{ logSeleccionado?.ip_origen }}</p>
+          </div>
+          
+          <div class="info-item">
+            <strong>Fecha y Hora:</strong>
+            <p>{{ logSeleccionado?.fecha | date:'medium' }}</p>
+          </div>
+        </div>
+
+        <h4 class="mt-4">Descripción del Evento</h4>
+        <div class="descripcion-box" [ngClass]="logSeleccionado?.exito ? 'box-success' : 'box-danger'">
+          {{ logSeleccionado?.descripcion }}
+        </div>
+
+        <h4 class="mt-4">Dispositivo / User-Agent</h4>
+        <div class="mono break-text">
+          {{ logSeleccionado?.user_agent || 'No detectado' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

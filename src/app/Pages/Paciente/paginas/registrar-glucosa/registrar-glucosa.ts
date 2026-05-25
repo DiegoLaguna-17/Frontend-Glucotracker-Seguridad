@@ -154,7 +154,7 @@ export class RegistrarGlucosa implements OnInit {
         ...this.glucosaForm.value,
         fecha,
         hora,
-        id_paciente: localStorage.getItem('id_rol') // ⚠️ reemplaza por el ID real
+        id_paciente: localStorage.getItem('id_rol') 
       };
 
       console.log('Datos a enviar al backend:', datosParaBackend);
@@ -182,10 +182,10 @@ export class RegistrarGlucosa implements OnInit {
   enviarAlBackend(datos: any) {
     const url = `${environment.apiUrl}/pacientes/registrarGlucosa`;
 
-    this.http.post<{ message: string; registro_glucosa: { id_registro: number } }>(url, datos, { withCredentials: true }).subscribe({
+    this.http.post<any>(url, datos, { withCredentials: true }).subscribe({
       next: (response) => {
         // Ahora TypeScript sabe que response tiene id_registro
-        this.idRegistroGlucosa = response.registro_glucosa.id_registro;
+        this.idRegistroGlucosa = response.data.id_registro;
 
         console.log('ID del registro guardado:', this.idRegistroGlucosa);
 

@@ -74,11 +74,11 @@ export class EditarPaciente implements OnInit {
   semanasDeEmbarazo: number = 0;
   constructor() {
     this.formPaciente = this.fb.group({
-      nombre: ['', [Validators.required, Validators.minLength(3)]],
-      altura: ['', [Validators.required, Validators.pattern(/^\d+(,\d{1,2})?$/)]],
+      nombre:[{value:"",disabled: true}],
+      altura: ['', [Validators.required, Validators.pattern(/^\d+(.\d{1,2})?$/)]],
       peso: ['', [Validators.required, Validators.pattern(/^\d+(\.\d+)?$/)]],
       telefono: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]{10,}$/)]],
-      correo: ['', [Validators.required, Validators.email]],
+      correo: [{value:"",disabled: true}],
       embarazo: [false],
       fecha_terminacion: [null],
       semanas_embarazoN: [null],
@@ -191,49 +191,75 @@ export class EditarPaciente implements OnInit {
   }
 
   prepararDatosParaEnvio(): any {
-    const formValues = this.formPaciente.value;
+  const formValues = this.formPaciente.getRawValue(); 
+  // 👈 usamos getRawValue para evitar problemas con disabled
 
-    // Convertir altura de metros a cm para el backend
-    //const alturaEnCm = Math.round(parseFloat(formValues.altura.replace(',', '.')) * 100);
+  return {
+    // ❌ NO enviar nombre
+    // nombre: formValues.nombre,
 
-    return {
-      nombre: formValues.nombre,
-      altura: formValues.altura,
-      peso: `${formValues.peso}`,
-      telefono: formValues.telefono,
-      correo: formValues.correo,
-      embarazo: formValues.embarazo,
-      nombre_emergencia: formValues.nombre_emergencia,
-      numero_emergencia: formValues.numero_emergencia,
-      semanas_embarazo: formValues.semanas_embarazoN,
-      fecha_terminacion: formValues.fecha_terminacion,
-      fecha_inicio: formValues.fecha_inicio
-      // actividadFisica: {
-      //   nivel: formValues.actividadFisica_nivel,
-      //   descripcion: formValues.actividadFisica_descripcion
-      // },
-      //afecciones: this.afeccionesEditando,
-      // Mantener campos que no se editan
-      //fechaNac: this.pacienteData.fechaNac,
-      //genero: this.pacienteData.genero,
-      //admitidoPor: this.pacienteData.admitidoPor, // No cambia
-      //tratamientos: this.pacienteData.tratamientos,
-      //foto_perfil: this.pacienteData.foto_perfil
-    };
-  }
+    altura: formValues.altura,
+    peso: `${formValues.peso}`,
+    telefono: formValues.telefono,
+
+    // ❌ NO enviar correo
+    // correo: formValues.correo,
+
+    embarazo: formValues.embarazo,
+    nombre_emergencia: formValues.nombre_emergencia,
+    numero_emergencia: formValues.numero_emergencia,
+
+    semanas_embarazo: formValues.semanas_embarazoN,
+    fecha_terminacion: formValues.fecha_terminacion,
+    fecha_inicio: formValues.fecha_inicio
+  };
+}
 
   guardarCambios() {
-    const datosActualizados = this.prepararDatosParaEnvio();
-    const id_usuario = localStorage.getItem("id_usuario");
-    console.log("ID usuario:", id_usuario);
-    console.log("Datos a enviar:", datosActualizados);
-
-    const url = `${environment.apiUrl}/pacientes/actualizarPaciente/${id_usuario}`;
-    this.http.put(url, datosActualizados).subscribe({
-      next: (res) => console.log("Respuesta del servidor:", res),
-      error: (err) => console.error("Error en PUT:", err)
-    });
+  // 🚫 Validar antes de enviar
+  if (this.formPaciente.invalid) {
+    this.marcarCamposComoTocados();
+    this.showError("Por favor completa correctamente el formulario");
+    return;
   }
+
+  this.guardando = true;
+
+  const datosActualizados = this.prepararDatosParaEnvio();
+  const id_usuario = localStorage.getItem("id_usuario");
+
+  const url = `${environment.apiUrl}/pacientes/actualizarPaciente/${id_usuario}`;
+
+  this.http.put(url, datosActualizados).subscribe({
+    next: (res: any) => {
+      console.log("✅ Respuesta:", res);
+
+      this.guardando = false;
+
+      // ✅ MOSTRAR MODAL DE ÉXITO
+      this.showSuccessModal.set(true);
+    },
+
+    error: (err) => {
+      console.error("❌ Error:", err);
+
+      this.guardando = false;
+
+      // 🔴 MENSAJE INTELIGENTE
+      let mensaje = "Error al actualizar los datos";
+
+      if (err.status === 400) {
+        mensaje = err.error?.error || "Datos inválidos";
+      } else if (err.status === 404) {
+        mensaje = "Paciente no encontrado";
+      } else if (err.status === 500) {
+        mensaje = err.error?.details || "Error interno del servidor";
+      }
+
+      this.showError(mensaje);
+    }
+  });
+}
 
   confirmarCancelar() {
     this.showConfirmModal.set(true);

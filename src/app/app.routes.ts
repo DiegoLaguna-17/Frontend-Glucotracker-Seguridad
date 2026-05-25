@@ -66,7 +66,11 @@ export const routes: Routes = [
             },
             {
                 path: 'solicitudes-pendientes/detalle', loadComponent: () => import('./Pages/Admin/paginas/detalle-solicitud/detalle-solicitud').then(m => m.DetalleSolicitud)
-            }
+            },
+            {
+                path:'administradores/logsAplicacion', loadComponent:()=> import ('./Pages/Admin/paginas/logs-aplicacion/logs-aplicacion').then(m=>m.LogsAplicacion)
+            },
+            
         ]
     },
     {
@@ -155,6 +159,9 @@ export const routes: Routes = [
             },
             {
                 path: 'medicos/activos/detalle', loadComponent: () => import('./Pages/OSI/paginas/medicos/detalle-medico-activo/detalle-medico-activo').then(m => m.DetalleMedicoActivo)
+            },
+            {
+                path:'administradores/logsSeguridad', loadComponent:()=> import ('./Pages/Admin/paginas/logs-seguridad/logs-seguridad').then(m=>m.LogsSeguridad)
             }
         ]
     }

@@ -15,7 +15,7 @@
         </button>
   </div>
   <nav class="menu">
-      <a class="item" routerLink="./pacientes" routerLinkActive="active">
+      <a class="item" routerLink="./pacientes" routerLinkActive="active"  *ngIf="rolMedico!='medico_supervisor'">
 
         <span>Pacientes</span>
       </a>
@@ -25,17 +25,27 @@
               class="item item-btn"
               (click)="toggleAlertas()"
               [attr.aria-expanded]="openAlertas()"
-              aria-controls="submenu-alertas">
+              aria-controls="submenu-alertas"  *ngIf="rolMedico!='medico_supervisor'">
 
         <span class="grow">Alertas</span>
         <span class="chev" [class.open]="openAlertas()">▾</span>
       </button>
 
-      <div id="submenu-alertas" class="submenu" *ngIf="openAlertas()">
+      <div id="submenu-alertas" class="submenu" *ngIf="openAlertas() && rolMedico!='medico_supervisor'">
         <a class="subitem" routerLink="./activas" routerLinkActive="active">Activas</a>
         <a class="subitem" routerLink="./resueltas" routerLinkActive="active">Resueltas</a>
       </div>
+      <a class="item" routerLink="./pacientes/activos" routerLinkActive="active" *ngIf="rolMedico=='medico_supervisor'">
+
+        <span>Pacientes general</span>
+      </a>
+      <a class="item" routerLink="./logsAplicacion" routerLinkActive="active" *ngIf="rolMedico=='medico_supervisor'">
+
+        <span>Logs</span>
+      </a>
     </nav>
+
+    
 
   <button class="logout" type="button" (click)="logout.emit()">
     Cerrar Sesión

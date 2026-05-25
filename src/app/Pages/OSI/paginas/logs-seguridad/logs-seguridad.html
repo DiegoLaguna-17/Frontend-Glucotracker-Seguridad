@@ -11,7 +11,7 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Usuario / Rol</th>
+          <th>Correo/rol</th>
           <th>Evento</th>
           <th>Descripción</th>
           <th>Éxito</th>
@@ -23,8 +23,8 @@
       <tbody>
         <tr *ngFor="let log of logsPaginados">
           <td data-label="ID">{{ log.id }}</td>
-          <td data-label="Usuario / Rol">
-            <strong>{{ log.nombre_usuario }}</strong><br>
+          <td data-label="Correo">
+            <strong>{{ log.email_intento }}</strong><br>
             <small class="texto-secundario">{{ log.rol | uppercase }}</small>
           </td>
           <td data-label="Evento">

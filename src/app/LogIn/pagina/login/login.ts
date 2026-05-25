@@ -323,9 +323,13 @@ export class Login implements OnInit {
             this.router.navigate(['/administrador']);
           } else if (usuarioData.cargo === 'admin') {
             this.router.navigate(['/osi']);
-          } else if (usuarioData.rol === 'medico') {
+          } else if (usuarioData.rol === 'medico'|| usuarioData.rol === 'auditor_medico') {
             this.router.navigate(['/medico']);
-          } else {
+          }
+          else if (usuarioData.rol.includes('supervisor')) {
+            this.router.navigate(['/medico/pacientes/activos']);
+          }
+          else if(usuarioData.rol === 'paciente'|| usuarioData.rol === 'auditor_paciente'){
             this.router.navigate(['/paciente']);
           }
         }, 2000);

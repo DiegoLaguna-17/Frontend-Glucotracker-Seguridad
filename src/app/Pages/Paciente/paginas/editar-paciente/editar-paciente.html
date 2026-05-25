@@ -91,6 +91,7 @@
             formControlName="correo"
             placeholder="ejemplo@correo.com"
             [class.error]="f['correo'].touched && f['correo'].invalid"
+            
           />
           <div class="mensaje-error" *ngIf="f['correo'].touched && f['correo'].invalid">
             <span *ngIf="f['correo'].hasError('required')">El correo es requerido</span>

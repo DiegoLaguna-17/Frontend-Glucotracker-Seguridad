@@ -11,6 +11,7 @@ import { PerfilModelo } from '../../paginas/perfil/perfil';
 export class MedSidebar {
    @Output() logout = new EventEmitter<void>();
   openAlertas = signal(false);
+  rolMedico=localStorage.getItem('rol')
   toggleAlertas(){ this.openAlertas.update(v => !v); }
   
    sidebarOpen = signal(false);

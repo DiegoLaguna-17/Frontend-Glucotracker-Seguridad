@@ -44,6 +44,10 @@ export class DetalleSolicitud implements OnInit {
   imagenVistaPrevia: string | ArrayBuffer | null = null;
   descripcionTratamiento: string = '';
 
+
+  fechaMinima:string='';
+
+  esAuditor: boolean = false;
   ngOnInit() {
     // 1. Obtenemos los datos del usuario desde el estado del router
     this.solicitudPendiente = history.state.solicitud;
@@ -60,6 +64,9 @@ export class DetalleSolicitud implements OnInit {
     // 3. Cargamos los roles y catálogos
     this.cargarRoles();
     this.cargarCatalogos();
+    // 4. Obtener fecha hoy
+     const hoy = new Date();
+    this.fechaMinima = hoy.toISOString().split('T')[0];
   }
 
   inicializarFormularios() {
@@ -77,13 +84,17 @@ export class DetalleSolicitud implements OnInit {
       altura: ['', [Validators.required, Validators.min(0)]],
       enfermedad_id: [''],
       tratamiento_id: ['', [Validators.required, Validators.min(1)]],
-      dosis_: ['']
+      dosis_: [''],
+      id_rol:['',Validators.required],
+      fecha_fin:['']
     });
 
     // Formulario para Médico (excluyendo lo que ya llenó en el paso 1)
     this.medicoForm = this.fb.group({
       departamento: ['', Validators.required],
-      id_especialidad: ['', Validators.required]
+      id_especialidad: ['', Validators.required],
+      id_rol:['',Validators.required],
+      fecha_fin:['']
     });
   }
 
@@ -98,9 +109,22 @@ export class DetalleSolicitud implements OnInit {
       error: (err) => console.error('Error cargando roles', err)
     });
   }
-
+  rolesEspecificos:any[]=[]
+  cargarRolesEspecificos(tipoRol:String){
+    this.http.get<any>(`${environment.apiUrl}/administradores/roles/tipo?tipo=${tipoRol}`).subscribe({
+      next: (res) => {
+        if (res.status === 'success') {
+          // Filtramos si quieres evitar que seleccionen "Soporte" para estas cuentas
+          this.rolesEspecificos = res.data;
+        }
+        console.log(this.rolesEspecificos)
+      },
+      error: (err) => console.error('Error cargando roles', err)
+    });
+  }
   seleccionarRol(rol: any) {
     this.rolSeleccionado = rol;
+    this.cargarRolesEspecificos(rol.nombre_rol)
   }
 
   // --- LÓGICA DE PACIENTES ---
@@ -178,8 +202,15 @@ export class DetalleSolicitud implements OnInit {
       if (this.matriculaFile) formData.append('matriculaProfesional', this.matriculaFile);
       if (this.carnetFile) formData.append('carnetProfesional', this.carnetFile);
     }
+    const dataPreview: any = {};
 
+    formData.forEach((value, key) => {
+      dataPreview[key] = value;
+    });
+
+    console.log('📦 DATA A ENVIAR:', dataPreview);
     // 4. Enviar Petición PUT
+    
     this.http.put(`${environment.apiUrl}/administradores/activar-cuenta`, formData, { withCredentials: true })
       .subscribe({
         next: (res: any) => {
@@ -210,4 +241,29 @@ export class DetalleSolicitud implements OnInit {
   volver() {
     this.router.navigate(['/administrador/solicitudes-pendientes']);
   }
+
+  onRolChange(event: any) {
+  const idRolSeleccionado = event.target.value;
+  const rol = this.rolesEspecificos.find(r => r.id_rol == idRolSeleccionado);
+
+  this.esAuditor = rol?.nombre_rol.toLowerCase().includes('auditor');
+
+  const form = this.rolSeleccionado?.nombre_rol === 'medico'
+    ? this.medicoForm
+    : this.pacienteForm;
+
+  if (!this.esAuditor) {
+    form.patchValue({ fecha_fin: null });
+  }
+
+  if (this.esAuditor) {
+    form.get('fecha_fin')?.setValidators([Validators.required]);
+  } else {
+    form.get('fecha_fin')?.clearValidators();
+  }
+
+  form.get('fecha_fin')?.updateValueAndValidity();
+
+  console.log('es auditor:', this.esAuditor);
+}
 }

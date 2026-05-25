@@ -89,7 +89,7 @@ export class AlertasActivas implements OnInit {
         this.cargarAlertas(localStorage.getItem('id_rol'));
       },
       error: (err) => {
-        this.errorMessage = err;
+        this.errorMessage = err.message;
         this.isErrorOpen = true;
       }
     });

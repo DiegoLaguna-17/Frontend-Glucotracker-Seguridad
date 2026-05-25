@@ -38,6 +38,7 @@ export class GestionRoles implements OnInit {
   showSuccessModal = signal(false);
   showErrorModal = signal(false);
   modalMessage = signal('');
+  
 
   permisosDisponibles = computed(() => {
     const listaRoles = this.roles();
@@ -156,27 +157,36 @@ export class GestionRoles implements OnInit {
 
   cerrarModal() { this.mostrarModal.set(false); }
 
-  confirmarAgregarRol() {
-    if (!this.nuevoRolNombre.trim()) return;
+confirmarAgregarRol() {
+  const nombre = this.nuevoRolNombre.trim();
 
-    const nuevoId = this.roles().length > 0 
-      ? Math.max(...this.roles().map(r => r.id_rol)) + 1 
-      : 1;
+  if (!nombre) return;
 
-    const nuevoRol: Rol = {
-      id_rol: nuevoId,
-      nombre_rol: this.nuevoRolNombre,
-      permisos: this.permisosDisponibles().map(p => ({
-        id_permiso: p.id_permiso,
-        nombre: p.nombre,
-        activo: false
-      }))
-    };
+  this.loadingGuardar.set(true);
 
-    this.roles.update(actuales => [...actuales, nuevoRol]);
-    this.cerrarModal();
-    this.abrirModalExito(`El rol "${this.nuevoRolNombre}" fue agregado. Recuerda hacer clic en "Guardar cambios" para aplicarlo.`);
-  }
+  this.http.post<any>(
+    `${environment.apiUrl}/administradores/roles`,
+    { nombre_rol: nombre },
+    { withCredentials: true }
+  ).subscribe({
+    next: (res) => {
+      this.loadingGuardar.set(false);
+
+      this.cerrarModal();
+
+      // 🔥 recargar desde BD (clave)
+      this.cargarMatriz();
+
+      this.abrirModalExito(`El rol "${nombre}" fue creado correctamente.`);
+    },
+    error: (err) => {
+      this.loadingGuardar.set(false);
+
+      const errorMsg = err.error?.message || err.error?.error || 'Error al crear el rol.';
+      this.abrirModalError(errorMsg);
+    }
+  });
+}
 
   // --- NUEVO: Controladores de Modales de Alerta ---
   abrirModalExito(mensaje: string) {

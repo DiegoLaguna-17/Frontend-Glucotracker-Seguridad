@@ -66,7 +66,9 @@ export const routes: Routes = [
             },
             {
                 path: 'solicitudes-pendientes/detalle', loadComponent: () => import('./Pages/Admin/paginas/detalle-solicitud/detalle-solicitud').then(m => m.DetalleSolicitud)
-            }
+            },
+            
+            
         ]
     },
     {
@@ -99,7 +101,16 @@ export const routes: Routes = [
             },
             {
                 path: 'editar-medico', loadComponent: () => import('./Pages/Medico/paginas/editar-medico/editar-medico').then(m => m.EditarMedico)
-            }
+            },
+            {
+                path: 'pacientes/activos', loadComponent: () => import('./Pages/Medico/paginas/pacientes-generale/pacientes-activos/pacientes-activos').then(m => m.PacientesActivos)
+            },
+            {
+                path: 'pacientes/activos/detalle', loadComponent: () => import('./Pages/Medico/paginas/pacientes-generale/detalle-paciente-activo/detalle-paciente-activo').then(m => m.DetallePacienteActivo)
+            },
+            {
+                path:'logsAplicacion', loadComponent:()=> import ('./Pages/Medico/paginas/logs-aplicacion/logs-aplicacion').then(m=>m.LogsAplicacion)
+            },
 
         ]
     },
@@ -155,6 +166,9 @@ export const routes: Routes = [
             },
             {
                 path: 'medicos/activos/detalle', loadComponent: () => import('./Pages/OSI/paginas/medicos/detalle-medico-activo/detalle-medico-activo').then(m => m.DetalleMedicoActivo)
+            },
+            {
+                path:'administradores/logsSeguridad', loadComponent:()=> import ('./Pages/OSI/paginas/logs-seguridad/logs-seguridad').then(m=>m.LogsSeguridad)
             }
         ]
     }

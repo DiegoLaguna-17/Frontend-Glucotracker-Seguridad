@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-verificar-correo',
   templateUrl: './verificar-correo.html',
@@ -29,7 +30,7 @@ export class VerificarCorreo implements OnInit {
       return;
     }
 
-    this.http.get(`http://localhost:3000/api/solicitudes/verificarCorreo?token=${token}`)
+    this.http.get(`${environment.apiUrl}/solicitudes/verificarCorreo?token=${token}`)
       .subscribe({
         next: () => {
           this.estado = 'success';

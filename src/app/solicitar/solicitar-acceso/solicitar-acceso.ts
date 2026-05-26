@@ -52,11 +52,11 @@ export class SolicitudAcceso {
       validators: this.passwordsMatchValidator
     });
   }
-
+  cargando:boolean=false;
   enviarSolicitud() {
     if (this.solicitudForm.valid) {
       const url = `${environment.apiUrl}/solicitudes/solicitarRegistro`; // Endpoint público
-
+      this.cargando=true;
       // Extraemos solo lo necesario para el backend
       const { nombre, correo, contrasena, fechaNacimiento, telefono } = this.solicitudForm.value;
 
@@ -73,11 +73,15 @@ export class SolicitudAcceso {
       // 🔹 2. Tipamos la petición con la interfaz ApiResponse
       this.http.post<ApiResponse<any>>(url, payload).subscribe({
         next: (res) => {
+          this.cargando=false;
           console.log('Éxito:', res.message); // Verificamos el mensaje estandarizado de éxito
           this.mostrarModalExito = true;
           this.solicitudForm.reset();
+          
         },
         error: (err) => {
+                    this.cargando=false;
+
           console.error('Error enviando solicitud:', err);
           this.mostrarError(this.obtenerMensajeError(err));
         }

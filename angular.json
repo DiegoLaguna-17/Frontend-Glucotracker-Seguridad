@@ -50,6 +50,7 @@
               ],
               "outputHashing": "all",
               "subresourceIntegrity": true,
+              "styleNonce": "my-csp-nonce",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

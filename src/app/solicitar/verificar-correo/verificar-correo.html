@@ -1,0 +1,50 @@
+<div class="container">
+  <div class="card">
+    <h2 *ngIf="estado === 'loading'">Verificando tu cuenta...</h2>
+
+   <div *ngIf="estado === 'success'">
+  <h2>✅ Correo verificado exitosamente</h2>
+
+  <p><strong>Para completar tu registro, sigue estos pasos:</strong></p>
+
+  <ol>
+    <li>
+      Descarga el formulario PDF correspondiente (Paciente o Médico).
+    </li>
+    <li>
+      Complétalo con tu información personal, clínica o profesional.
+    </li>
+    <li>
+      Envíalo al correo 
+      <strong>soporte&#64;glucotracker.com</strong>.
+    </li>
+  </ol>
+
+  <p class="nota">
+    Nuestro equipo revisará tu información y, una vez validada, se te asignará el tipo de cuenta y los permisos correspondientes.
+  </p>
+
+  <p class="nota">
+    ⏳ Este proceso puede tardar hasta 24 horas. Tu cuenta no estará activa hasta completar esta validación.
+  </p>
+
+  <hr>
+
+  <p class="nota">
+    🔎 <strong>¿Deseas solicitar acceso como auditor (paciente o médico)?</strong><br>
+    Este tipo de acceso es especial y se gestiona de forma independiente.  
+    Por favor, comunícate directamente con nuestro equipo en 
+    <strong>soporte&#64;glucotracker.com</strong> indicando tu solicitud.
+  </p>
+
+  <button (click)="irLogin()">Ir al login</button>
+</div>  
+
+    <div *ngIf="estado === 'error'">
+      <h2>❌ Error al verificar</h2>
+      <p>{{ mensajeError }}</p>
+
+      <button (click)="irLogin()">Volver</button>
+    </div>
+  </div>
+</div>

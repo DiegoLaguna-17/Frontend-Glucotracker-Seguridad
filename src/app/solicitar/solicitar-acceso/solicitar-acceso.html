@@ -48,7 +48,12 @@
       </div>
 
       <div class="button-container">
-        <button type="submit" class="btn" [disabled]="!solicitudForm.valid">Enviar Solicitud</button>
+        <button 
+          type="submit" 
+          class="btn" 
+          [disabled]="!solicitudForm.valid || cargando">
+          {{ cargando ? 'Enviando...' : 'Enviar Solicitud' }}
+        </button>
       </div>
     </form>
   </div>
@@ -58,15 +63,16 @@
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-body">
       <div class="modal-icon grande" style="color: #28a745; font-size: 3.5rem; font-weight: bold; margin-bottom: 0.5rem;">📩</div>
-      <h3>¡Paso 1 Completado!</h3>
+      <h3>¡Registro exitoso!</h3>
       <div class="instrucciones-pdf">
-        <p>Tus credenciales han sido registradas. Para activar tu cuenta debes completar el <strong>Paso 2</strong>:</p>
+        <p>Hemos enviado un enlace de verificación a tu correo.</p>
+
         <ol>
-          <li>Descarga el formulario PDF correspondiente a tu perfil (Paciente o Médico).</li>
-          <li>Llénalo con tus datos clínicos/profesionales.</li>
-          <li>Envíalo por correo a <strong>soporte&#64;glucotracker.com</strong>.</li>
+          <li>Revisa tu bandeja de entrada (y spam).</li>
+          <li>Haz clic en el botón de verificación.</li>
+          <li>Tu cuenta se activará automáticamente.</li>
         </ol>
-        <p class="nota">Nuestro equipo validará tu información y activará tu cuenta en un plazo de 24 horas.</p>
+
       </div>
       <div class="modal-footer" style="margin-top: 1.5rem;">
         <button class="btn btn-modal-aceptar" (click)="cerrarModalExito()">Entendido, volver al Login</button>

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { SolicitarMedicoComponent } from './solicitar/solicitar-medico/solicitar-medico';
 import { SolicitarPaciente } from './solicitar/solicitar-paciente/solicitar-paciente';
 import { SolicitudAcceso } from './solicitar/solicitar-acceso/solicitar-acceso';
+import { VerificarCorreo } from './solicitar/verificar-correo/verificar-correo';
 export const routes: Routes = [
     {
         path: '', redirectTo: 'login', pathMatch: 'full',
@@ -21,6 +22,10 @@ export const routes: Routes = [
     {
         path: 'solicitar-paciente',
         component: SolicitarPaciente
+    },
+    {
+        path:'verificar/correo',
+        component: VerificarCorreo
     },
     {
         path: 'administrador',

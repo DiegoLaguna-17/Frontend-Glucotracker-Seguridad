@@ -150,7 +150,7 @@ export class Login implements OnInit {
     } else {
       // Segundo o más errores de código: cuenta como fallo de login
       this.failedLoginAttempts++;
-      console.log(`Código incorrecto por segunda vez. Fallo de login #${this.failedLoginAttempts}`);
+      //console.log(`Código incorrecto por segunda vez. Fallo de login #${this.failedLoginAttempts}`);
       
       // Mostrar modal de error y cerrar el modal de verificación
       this.errorMessage.set(`Código incorrecto repetido. ${errorMessage}`);
@@ -201,7 +201,7 @@ export class Login implements OnInit {
     )
       .subscribe({
         next: (res) => {
-          console.log('Respuesta login:', res);
+          //console.log('Respuesta login:', res);
           
           // NUEVO: Login exitoso - Reiniciamos todos los contadores
           this.resetAllFailedAttempts();
@@ -220,11 +220,11 @@ export class Login implements OnInit {
           this.loading.set(false);
         },
         error: (err) => {
-          console.error('Error de login:', err);
+          //console.error('Error de login:', err);
           
           // NUEVO: Incrementamos el contador de intentos fallidos de LOGIN
           this.failedLoginAttempts++;
-          console.log(`Login fallido #${this.failedLoginAttempts}`);
+          //console.log(`Login fallido #${this.failedLoginAttempts}`);
 
           if (err.error?.code === 'PASSWORD_EXPIRED') {
             this.recoverEmail = credentials.correo;
@@ -295,14 +295,14 @@ export class Login implements OnInit {
       codigo
     }, { withCredentials: true }).subscribe({
       next: (res) => {
-        console.log('Login completado con OTP:', res);
+        //console.log('Login completado con OTP:', res);
         
         // NUEVO: Login exitoso - Reiniciamos todos los contadores
         this.resetAllFailedAttempts();
 
         // Ajuste flexible para leer los datos del usuario
         const usuarioData = res.data.usuario || res.data;
-        console.log(usuarioData)
+        //console.log(usuarioData)
         localStorage.setItem('id_usuario', usuarioData.id_usuario);
         localStorage.setItem('id_rol', usuarioData.id_rol);
         localStorage.setItem('rol', usuarioData.rol);
@@ -355,7 +355,7 @@ export class Login implements OnInit {
       return;
     }
     this.loading.set(true);
-    console.log(environment.apiUrl + '/seguridad/recuperar-contrasena');
+    //console.log(environment.apiUrl + '/seguridad/recuperar-contrasena');
     this.http.post<any>(environment.apiUrl + '/seguridad/recuperar-contrasena', { correo }).subscribe({
       next: (res) => {
         this.recoverEmail = correo;
@@ -364,9 +364,9 @@ export class Login implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('ERROR COMPLETO:', err);
-        console.error('STATUS:', err.status);
-        console.error('BODY:', err.error);
+        //console.error('ERROR COMPLETO:', err);
+        //console.error('STATUS:', err.status);
+        //console.error('BODY:', err.error);
 
         this.showErrorModal.set(true);
         this.errorMessage.set(err.error?.error || 'Error al solicitar recuperación');
@@ -394,9 +394,9 @@ export class Login implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('ERROR COMPLETO:', err);
-        console.error('STATUS:', err.status);
-        console.error('BODY:', err.error);
+        //console.error('ERROR COMPLETO:', err);
+        //console.error('STATUS:', err.status);
+        //console.error('BODY:', err.error);
 
         this.showErrorModal.set(true);
         this.errorMessage.set(err.error?.error || 'Código incorrecto o expirado');
@@ -470,7 +470,7 @@ export class Login implements OnInit {
     
     // Calculamos los segundos según los intentos fallidos de LOGIN
     const delaySeconds = this.getDelaySeconds();
-    console.log(`Esperando ${delaySeconds} segundos (intento fallido #${this.failedLoginAttempts})`);
+    //console.log(`Esperando ${delaySeconds} segundos (intento fallido #${this.failedLoginAttempts})`);
     
     // Iniciar cuenta regresiva para el botón de LOGIN
     this.startCountdown(delaySeconds);

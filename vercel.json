@@ -11,7 +11,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' 'unsafe-hashes' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://backend-glucotracker-seguridad.vercel.app https://api.apiglucotracker.com; frame-ancestors 'none'; form-action 'self'"
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'sha256-poYNl0A0dgi5pmcDvHXu4sxw3EO4dPAN28A6j6xKLwo=' 'sha256-maxTx4vE+3rAY3xSpCFVMu0qUdjZosn2zEcx4Vrr9dg=' 'sha256-cr8AH+CnO+m/MJjyR3oiTPCrlcHgb5TX49hNymaN5mo='; style-src-attr 'sha256-AkGc/9SiOd74zk72UnCdLs+k10sM4iy2uKmgoXkaHe0='; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://backend-glucotracker-seguridad.vercel.app https://api.apiglucotracker.com; frame-ancestors 'none'; form-action 'self'"
         },
         {
           "key": "X-Frame-Options",
@@ -32,7 +32,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' 'unsafe-hashes' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://backend-glucotracker-seguridad.vercel.app https://api.apiglucotracker.com; frame-ancestors 'none'; form-action 'self'"
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'sha256-poYNl0A0dgi5pmcDvHXu4sxw3EO4dPAN28A6j6xKLwo=' 'sha256-maxTx4vE+3rAY3xSpCFVMu0qUdjZosn2zEcx4Vrr9dg=' 'sha256-cr8AH+CnO+m/MJjyR3oiTPCrlcHgb5TX49hNymaN5mo='; style-src-attr 'sha256-AkGc/9SiOd74zk72UnCdLs+k10sM4iy2uKmgoXkaHe0='; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://backend-glucotracker-seguridad.vercel.app https://api.apiglucotracker.com; frame-ancestors 'none'; form-action 'self'"
         },
         {
           "key": "X-Frame-Options",

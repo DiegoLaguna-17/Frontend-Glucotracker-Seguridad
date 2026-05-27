@@ -30,7 +30,7 @@ export interface PerfilModelo {
   selector: 'app-medicos-activos',
   standalone: true,
   // 🔹 Quitamos CardMedicoA de aquí
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule],
   templateUrl: './medicos-activos.html',
   styleUrls: ['./medicos-activos.scss'],
 })

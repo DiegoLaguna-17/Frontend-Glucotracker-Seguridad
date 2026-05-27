@@ -1,0 +1,20 @@
+<div class="modal-overlay" *ngIf="authErrorService.showForbiddenModal()">
+  <div class="modal modal--error">
+    <div class="modal-header">
+      <h2 class="modal-title">Acceso Denegado</h2>
+      <button class="modal-close" (click)="closeModal()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-icon">!</div>
+      <p class="modal-description">
+        Usted no tiene permisos para realizar esta acción o acceder a este recurso.
+      </p>
+      <div class="modal-actions">
+        <button class="btn-modal btn-modal--error" (click)="closeModal()">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

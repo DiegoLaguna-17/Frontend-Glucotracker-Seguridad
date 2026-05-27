@@ -16,7 +16,7 @@ export interface ApiResponse<T> {
 @Component({
   selector: 'app-alertas-activas',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardAlertaA, HttpClientModule],
+  imports: [CommonModule, FormsModule, CardAlertaA],
   templateUrl: './alertas-activas.html',
   styleUrls: ['./alertas-activas.scss'],
 })

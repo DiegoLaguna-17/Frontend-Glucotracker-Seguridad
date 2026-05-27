@@ -7,7 +7,7 @@ import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-detalle-paciente-solicitud',
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule],
   templateUrl: './detalle-paciente-solicitud.html',
   styleUrl: './detalle-paciente-solicitud.scss',
 })

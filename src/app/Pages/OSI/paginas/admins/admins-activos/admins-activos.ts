@@ -30,7 +30,7 @@ export interface PerfilAdmin {
 
 @Component({
   selector: 'app-admins-activos',
-  imports: [CommonModule, HttpClientModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admins-activos.html',
   styleUrl: './admins-activos.scss',
 })

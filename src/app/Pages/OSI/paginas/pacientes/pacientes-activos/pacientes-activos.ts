@@ -61,7 +61,7 @@ export interface ApiResponse<T> {
 @Component({
   selector: 'app-pacientes-activos',
   standalone: true,
-  imports: [CommonModule, HttpClientModule], // Quitamos CardPacienteA de aquí
+  imports: [CommonModule], // Quitamos CardPacienteA de aquí
   templateUrl: './pacientes-activos.html',
   styleUrl: './pacientes-activos.scss',
 })

@@ -47,7 +47,7 @@ export interface Patient {
 
 @Component({
   selector: 'app-perfil',
-  imports: [NgFor, NgIf, HttpClientModule, CommonModule, ReactiveFormsModule],
+  imports: [NgFor, NgIf,  CommonModule, ReactiveFormsModule],
   templateUrl: './perfil.html',
   styleUrl: './perfil.scss',
   standalone: true,

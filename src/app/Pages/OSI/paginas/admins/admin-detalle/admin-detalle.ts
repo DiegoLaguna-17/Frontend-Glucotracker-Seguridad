@@ -26,7 +26,7 @@ interface PerfilAdmin {
 @Component({
   selector: 'app-admin-detalle',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule],
   templateUrl: './admin-detalle.html',
   styleUrl: './admin-detalle.scss',
 })

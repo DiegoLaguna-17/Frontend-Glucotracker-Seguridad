@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardPromedio } from '../../componentes/card-promedio/card-promedio';
 import { CardGlucosa } from '../../componentes/card-glucosa/card-glucosa';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
 
 // 🔹 1. Interfaz de respuesta estandarizada
@@ -17,7 +17,7 @@ export interface ApiResponse<T> {
 @Component({
   selector: 'app-mis-registros',
   standalone: true, // Asumo que es standalone por tus imports
-  imports: [CommonModule, FormsModule, CardPromedio, CardGlucosa, HttpClientModule],
+  imports: [CommonModule, FormsModule, CardPromedio, CardGlucosa, ],
   templateUrl: './mis-registros.html',
   styleUrl: './mis-registros.scss',
 })

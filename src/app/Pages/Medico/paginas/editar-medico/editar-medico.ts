@@ -24,7 +24,7 @@ export interface MedicoData {
   imports: [
     CommonModule, 
     ReactiveFormsModule, 
-    HttpClientModule,
+    
     FormsModule
   ],
   templateUrl: './editar-medico.html',

@@ -46,7 +46,7 @@ export interface Tratamientos {
 @Component({
   selector: 'app-pacientes-activos',
   standalone: true,
-  imports: [CardPacienteA, CommonModule, HttpClientModule],
+  imports: [CardPacienteA, CommonModule],
   templateUrl: './pacientes-activos.html',
   styleUrl: './pacientes-activos.scss',
 })

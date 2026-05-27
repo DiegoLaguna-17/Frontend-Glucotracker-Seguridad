@@ -29,7 +29,7 @@ interface PacienteDetalle {
 @Component({
   selector: 'app-registrar-glucosa',
   standalone: true, // 👈 importante si usas componentes standalone
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './registrar-glucosa.html',
   styleUrls: ['./registrar-glucosa.scss'],
 })

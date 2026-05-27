@@ -15,7 +15,7 @@ export interface ApiResponse<T> {
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, ReactiveFormsModule],
+  imports: [ CommonModule, ReactiveFormsModule],
   templateUrl: './perfil.html',
   styleUrls: ['./perfil.scss'],
 })

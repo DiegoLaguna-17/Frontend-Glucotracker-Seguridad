@@ -16,7 +16,7 @@ export interface ApiResponse<T> {
 @Component({
   selector: 'app-medicos-activos',
   standalone: true,
-  imports: [CardMedicoA, CommonModule, HttpClientModule],
+  imports: [CardMedicoA, CommonModule],
   templateUrl: './medicos-activos.html',
   styleUrls: ['./medicos-activos.scss'],
 })

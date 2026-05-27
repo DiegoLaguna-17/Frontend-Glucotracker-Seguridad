@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
 import { GlucosaService } from './glucosa.service';
 
@@ -15,7 +15,7 @@ export interface ApiResponse<T> {
 @Component({
   selector: 'app-registrar-glucosa',
   standalone: true, // 👈 importante si usas componentes standalone
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ],
   templateUrl: './registrar-glucosa.html',
   styleUrls: ['./registrar-glucosa.scss'],
 })

@@ -6,7 +6,7 @@ import { HttpClient,HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../../../../environments/environment';
 @Component({
   selector: 'app-pacientes-solicitudes',
-  imports: [CardPacienteA,CommonModule,HttpClientModule],
+  imports: [CardPacienteA,CommonModule],
   templateUrl: './pacientes-solicitudes.html',
   styleUrl: './pacientes-solicitudes.scss',
 })

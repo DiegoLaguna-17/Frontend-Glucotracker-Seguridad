@@ -8,7 +8,7 @@ import { CardSolicitud, SolicitudResumen } from '../componentes/card-solicitud/c
 @Component({
   selector: 'app-solicitudes-pendientes',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, CardSolicitud],
+  imports: [CommonModule,  CardSolicitud],
   templateUrl: './solicitudes-pendientes.html',
   styleUrl: './solicitudes-pendientes.scss',
 })

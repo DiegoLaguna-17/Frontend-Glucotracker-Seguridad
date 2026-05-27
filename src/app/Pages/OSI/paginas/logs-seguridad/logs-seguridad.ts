@@ -27,7 +27,7 @@ export interface LogsSeguridadResponse {
 @Component({
   selector: 'app-logs-seguridad',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule],
   templateUrl: './logs-seguridad.html',
   styleUrls: ['./logs-seguridad.scss'],
 })

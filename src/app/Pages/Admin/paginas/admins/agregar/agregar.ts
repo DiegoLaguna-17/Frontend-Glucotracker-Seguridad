@@ -6,7 +6,7 @@ import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-agregar',
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './agregar.html',
   styleUrl: './agregar.scss',
 })

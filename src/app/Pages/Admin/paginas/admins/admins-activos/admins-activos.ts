@@ -94,7 +94,7 @@ export interface PerfilAdmin {
 @Component({
   selector: 'app-admins-activos',
   // Quitamos CardAdminA y agregamos FormsModule
-  imports: [CommonModule, HttpClientModule, FormsModule],
+  imports: [CommonModule,  FormsModule],
   templateUrl: './admins-activos.html',
   styleUrl: './admins-activos.scss',
 })

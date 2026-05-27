@@ -21,7 +21,7 @@ export interface Auditoria{
 }
 @Component({
   selector: 'app-auditoria',
-  imports: [CommonModule,HttpClientModule],
+  imports: [CommonModule],
   templateUrl: './auditoria.html',
   styleUrl: './auditoria.scss',
 })

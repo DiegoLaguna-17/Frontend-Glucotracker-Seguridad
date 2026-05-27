@@ -29,7 +29,7 @@ export interface PerfilModelo {
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './perfil.html',
   styleUrl: './perfil.scss',
 })

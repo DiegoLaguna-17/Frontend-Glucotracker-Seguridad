@@ -16,7 +16,7 @@ export interface ApiResponse<T> {
 @Component({
   selector: 'app-solicitud-acceso',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './solicitar-acceso.html',
   styleUrl: './solicitar-acceso.scss',
 })

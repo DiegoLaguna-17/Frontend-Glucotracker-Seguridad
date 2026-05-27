@@ -10,7 +10,7 @@ environment
 @Component({
   selector: 'app-detalle-solicitud',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './detalle-solicitud.html',
   styleUrl: './detalle-solicitud.scss'
 })

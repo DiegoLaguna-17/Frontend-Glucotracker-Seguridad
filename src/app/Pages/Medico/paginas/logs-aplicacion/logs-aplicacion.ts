@@ -37,7 +37,7 @@ export interface LogsResponse {
 @Component({
   selector: 'app-logs-aplicacion',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule],
   templateUrl: './logs-aplicacion.html',
   styleUrls: ['./logs-aplicacion.scss'],
 })

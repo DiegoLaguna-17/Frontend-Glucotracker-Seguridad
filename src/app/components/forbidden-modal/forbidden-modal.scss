@@ -1,0 +1,134 @@
+// Animaciones para modal
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; // Z-index alto para asegurar que cubra toda la app
+  padding: 1rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal {
+  border-radius: 25px;
+  border: solid 3px #0a3d62;
+  box-shadow: 0 15px 40px rgba(10, 61, 98, 0.3);
+  max-width: 500px;
+  width: 100%;
+  animation: slideUp 0.4s ease-out;
+  
+  &--error {
+    background: #f8d7da;
+    border-color: #721c24;
+    color: #721c24;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.5rem 0.5rem;
+  border-bottom: solid 2px #0a3d62;
+  
+  .modal--error & {
+    border-color: #721c24;
+  }
+}
+
+.modal-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+  text-align: center;
+  
+  .modal--error & {
+    color: #721c24;
+  }
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  
+  .modal--error & {
+    color: #721c24;
+    &:hover {
+      background: #721c24;
+      color: #f8d7da;
+    }
+  }
+}
+
+.modal-body {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.modal-description {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #721c24;
+}
+
+.error-icon {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #dc3545;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-modal {
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: solid 2px;
+  
+  &--error {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+    
+    &:hover {
+      background: #c82333;
+      border-color: #bd2130;
+    }
+  }
+}

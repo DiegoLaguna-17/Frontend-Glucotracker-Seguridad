@@ -8,10 +8,6 @@
         <button class="btn-register btn-register--paciente" (click)="irARegistroPaciente()">
           Solicita Acceso
         </button>
-        
-       <!--  <button class="btn-register btn-register--medico" (click)="irARegistroMedico()">
-          Registrate como MÉDICO
-        </button>-->
       </div>
     </div>
   </div>
@@ -70,7 +66,7 @@
       </label>
 
         <button class="btn-login" type="submit" [disabled]="!canSubmit()">
-          {{ loading() ? 'Ingresando…' : buttonText() }}
+          {{ loadingLogin() ? 'Ingresando…' : buttonText() }}
         </button>
 
         <button
@@ -96,7 +92,7 @@
       <p class="modal-description">
         Se ha enviado un código de verificación a tu correo electrónico. Ingrésalo en AQUÍ.
         <br>
-      
+      </p>
       <div class="field">
         <input
           type="text"
@@ -106,34 +102,27 @@
           #codeInput />
       </div>
       
-       <div class="modal-actions"><!--
-        <button 
-          type="button" 
-          class="btn-modal btn-modal--secondary"
-          (click)="cancelVerification()">
-          Cancelar
-        </button> -->
-        
+       <div class="modal-actions">
         <button 
           type="button" 
           class="btn-modal btn-modal--primary"
           (click)="verifyAndLogin(codeInput)"
-          [disabled]="loading()">
-          {{ loading() ? 'Verificando…' : 'Verificar' }}
+          [disabled]="loadingVerify()">
+          {{ loadingVerify() ? 'Verificando…' : 'Verificar' }}
         </button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal de éxito -->
+<!-- Modal de éxito (Dinámico) -->
 <div class="modal-overlay" *ngIf="showSuccessModal()">
   <div class="modal modal--success">
     <div class="modal-body">
       <div class="success-icon">✓</div>
-      <h2 class="modal-title">¡Inicio de Sesión Exitoso!</h2>
+      <h2 class="modal-title">{{ successTitle() }}</h2>
       <p class="modal-description">
-        Serás redirigido a tu panel
+        {{ successMessage() }}
       </p>
       <div class="modal-actions">
       </div>
@@ -141,11 +130,11 @@
   </div>
 </div>
 
-<!-- Modal de error -->
+<!-- Modal de error (Dinámico) -->
 <div class="modal-overlay" *ngIf="showErrorModal()">
   <div class="modal modal--error">
     <div class="modal-header">
-      <h2 class="modal-title">Error de Inicio de Sesión</h2>
+      <h2 class="modal-title">{{ errorTitle() }}</h2>
       <button class="modal-close" (click)="closeErrorModal()">×</button>
     </div>
     
@@ -163,7 +152,7 @@
   </div>
 </div>
 
-<!-- Modal de error para código de verificación - NUEVO -->
+<!-- Modal de error para código de verificación -->
 <div class="modal-overlay" *ngIf="showCodeErrorModal()">
   <div class="modal modal--error">
     <div class="modal-header">
@@ -199,8 +188,8 @@
         <input type="email" placeholder="tucorreo@ejemplo.com" class="verification-input" style="letter-spacing: normal; width: 100%; text-align: left;" #recoverEmailInput />
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn-modal btn-modal--primary" (click)="solicitarRecuperacion(recoverEmailInput)" [disabled]="loading()">
-          {{ loading() ? 'Enviando…' : 'Enviar Código' }}
+        <button type="button" class="btn-modal btn-modal--primary" (click)="solicitarRecuperacion(recoverEmailInput)" [disabled]="loadingRecover()">
+          {{ loadingRecover() ? 'Enviando…' : 'Enviar Código' }}
         </button>
       </div>
     </div>
@@ -221,8 +210,8 @@
         <input type="text" placeholder="- - - - - -" maxlength="6" class="verification-input" #recoverCodeInput />
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn-modal btn-modal--primary" (click)="verificarCodigoRecuperacion(recoverCodeInput)" [disabled]="loading()">
-          {{ loading() ? 'Verificando…' : 'Verificar' }}
+        <button type="button" class="btn-modal btn-modal--primary" (click)="verificarCodigoRecuperacion(recoverCodeInput)" [disabled]="loadingRecover()">
+          {{ loadingRecover() ? 'Verificando…' : 'Verificar' }}
         </button>
       </div>
     </div>
@@ -248,8 +237,8 @@
           <input type="password" formControlName="confirmar_contrasena" placeholder="Confirmar contraseña" class="verification-input" style="letter-spacing: normal; width: 100%; text-align: left; margin-bottom: 1rem;" />
         </div>
         <div class="modal-actions">
-          <button type="submit" class="btn-modal btn-modal--primary" [disabled]="loading() || recoverForm.invalid">
-            {{ loading() ? 'Guardando…' : 'Cambiar Contraseña' }}
+          <button type="submit" class="btn-modal btn-modal--primary" [disabled]="loadingRecover() || recoverForm.invalid">
+            {{ loadingRecover() ? 'Guardando…' : 'Cambiar Contraseña' }}
           </button>
         </div>
       </form>
@@ -269,8 +258,8 @@
       <div class="error-icon" style="color: #f44336; font-size: 3rem; text-align: center; margin-bottom: 1rem;">!</div>
       <p class="modal-description">Tu cuenta ha sido bloqueada por múltiples intentos fallidos. Puedes solicitar un código de desbloqueo a tu correo registrado.</p>
       <div class="modal-actions">
-        <button type="button" class="btn-modal btn-modal--primary" (click)="solicitarDesbloqueo()" [disabled]="loading()">
-          {{ loading() ? 'Enviando…' : 'Solicitar Desbloqueo' }}
+        <button type="button" class="btn-modal btn-modal--primary" (click)="solicitarDesbloqueo()" [disabled]="loadingUnlock()">
+          {{ loadingUnlock() ? 'Enviando…' : 'Solicitar Desbloqueo' }}
         </button>
       </div>
     </div>
@@ -291,8 +280,8 @@
         <input type="text" placeholder="- - - - - -" maxlength="6" class="verification-input" #unlockCodeInput />
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn-modal btn-modal--primary" (click)="confirmarDesbloqueo(unlockCodeInput)" [disabled]="loading()">
-          {{ loading() ? 'Verificando…' : 'Desbloquear Cuenta' }}
+        <button type="button" class="btn-modal btn-modal--primary" (click)="confirmarDesbloqueo(unlockCodeInput)" [disabled]="loadingUnlock()">
+          {{ loadingUnlock() ? 'Verificando…' : 'Desbloquear Cuenta' }}
         </button>
       </div>
     </div>

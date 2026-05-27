@@ -16,7 +16,7 @@ export interface ApiResponse<T> {
 @Component({
   selector: 'app-alertas-resueltas',
   standalone: true, // Asumiendo que es standalone por tus imports
-  imports: [CardAlertaR, CommonModule, HttpClientModule],
+  imports: [CardAlertaR, CommonModule],
   templateUrl: './alertas-resueltas.html',
   styleUrl: './alertas-resueltas.scss',
 })

@@ -16,7 +16,7 @@ export interface ApiResponse<T> {
 @Component({
   selector: 'app-pacientes',
   standalone: true, // Asumiendo que usas standalone
-  imports: [PacienteCard, CommonModule, HttpClientModule],
+  imports: [PacienteCard, CommonModule],
   templateUrl: './pacientes.html',
   styleUrl: './pacientes.scss',
 })

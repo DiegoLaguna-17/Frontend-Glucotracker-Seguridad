@@ -29,7 +29,7 @@ interface PacienteDetalle {
 @Component({
   selector: 'app-detalle-paciente',
   standalone: true,
-  imports:[CommonModule,HttpClientModule],
+  imports:[CommonModule],
   templateUrl: './detalle-paciente.html',
   styleUrls: ['./detalle-paciente.scss']
 })

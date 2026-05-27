@@ -5,6 +5,8 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 
+
+@use '@angular/material' as mat;
 @font-face {
   font-family: 'Roboto';
   src: url('/assets/fonts/Roboto-Regular.ttf') format('truetype');
@@ -18,8 +20,6 @@
   font-weight: 700;
   font-style: normal;
 }
-@use '@angular/material' as mat;
-
 html {
   @include mat.theme((
     color: (

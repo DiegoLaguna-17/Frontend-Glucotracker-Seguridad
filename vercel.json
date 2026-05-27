@@ -27,7 +27,7 @@
         },
         {
           "key":"Access-Control-Allow-Origin",
-          "value":"https://frontend-glucotracker-segur-git-5eab9f-diegolaguna-17s-projects.vercel.app/"
+          "value":"https://frontend-glucotracker-seguridad.vercel.app"
         }
       ]
     }

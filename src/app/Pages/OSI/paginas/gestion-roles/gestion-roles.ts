@@ -74,24 +74,44 @@ export class GestionRoles implements OnInit {
       });
   }
 
-  togglePermiso(idRol: number, idPermiso: number, event: any) {
-    const isChecked = event.target.checked;
-    
-    this.roles.update(rolesActuales => {
-      return rolesActuales.map(rol => {
-        if (rol.id_rol === idRol) {
-          const nuevosPermisos = rol.permisos.map(p => {
-            if (p.id_permiso === idPermiso) {
-              return { ...p, activo: isChecked };
-            }
-            return p;
-          });
-          return { ...rol, permisos: nuevosPermisos };
-        }
+  togglePermiso(idRol: number, idPermiso: number, event: Event) {
+  const checkbox = event.target as HTMLInputElement;
+  const isChecked = checkbox.checked;
+
+  this.roles.update(rolesActuales => {
+    return rolesActuales.map(rol => {
+
+      if (rol.id_rol !== idRol) {
         return rol;
-      });
+      }
+
+      if (!isChecked) {
+        const permisosActivos = rol.permisos.filter(p => p.activo);
+
+        if (permisosActivos.length === 1) {
+          checkbox.checked = true;
+
+          this.abrirModalError(
+            'Debe existir al menos un permiso activo por rol.'
+          );
+
+          return rol; // No actualizar estado
+        }
+      }
+
+      const nuevosPermisos = rol.permisos.map(p =>
+        p.id_permiso === idPermiso
+          ? { ...p, activo: isChecked }
+          : p
+      );
+
+      return {
+        ...rol,
+        permisos: nuevosPermisos
+      };
     });
-  }
+  });
+}
 
   hasPermiso(idRol: number, idPermiso: number): boolean {
     const rol = this.roles().find(r => r.id_rol === idRol);

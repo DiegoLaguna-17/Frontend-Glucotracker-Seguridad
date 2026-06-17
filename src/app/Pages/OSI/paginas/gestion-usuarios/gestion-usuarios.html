@@ -1,0 +1,259 @@
+
+<section class="wrap">
+    <h1>Gestion de usuarios</h1>
+    <div class="busqueda">
+  <div class="busqueda__grupo">
+    <input
+      class="search"
+      type="search"
+      placeholder="Buscar usuario..."
+      [value]="q()"
+      (input)="q.set($any($event.target).value)"
+    />
+  </div>
+
+  <div class="busqueda__grupo">
+    <label>Estado:</label>
+    <select
+      class="search select-estado"
+      [value]="filtroEstado()"
+      (change)="filtroEstado.set($any($event.target).value)"
+    >
+      <option value="todos">Todos</option>
+      <option value="activo">Activos</option>
+      <option value="inactivo">Inactivos</option>
+    </select>
+  </div>
+</div>
+  <div style="margin-bottom: 15px;">
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Correo</th>
+          <th>Estado</th>
+          <th>Fecha (ingreso)</th>
+          <!--<th>Permisos</th>-->
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of usuariosFiltrados(); track m.id_usuario) {
+        <tr>
+          <td>{{ m.correo }}</td>
+          <td class="capitalize">{{ m.estado?'Activo':'Inactivo' }}</td>
+          <td>{{ m.fecha_registro | date:'dd/MM/yyyy' }}</td>
+          
+
+            <td>
+                <div class="acciones">
+                    <button class="btn" type="button" (click)="abrirModal(m)">
+                        Ver detalle
+                    </button>
+
+                    <button class="btn-yellow" type="button" (click)="abrirModalEditar(m)" >
+                        Editar
+                    </button>
+                    @if(m.estado==true){
+                        <button class="btn-red" type="button" (click)="abrirModalEliminar(m)">
+                            Eliminar
+                        </button>
+                    }
+                    @if(m.estado==false){
+                        <button class="btn-green" type="button" (click)="abrirModalReactivar(m)">
+                            Reactivar
+                        </button>
+                    }
+                </div>
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 20px;">
+            No se encontraron usuarios con ese criterio.
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  @if (modalAbierto()) {
+  <div class="modal-backdrop" (click)="cerrarModal()">
+    
+    <div class="modal" (click)="$event.stopPropagation()">
+      
+      <h2>Detalle del Usuario</h2>
+
+      @if (usuarioSeleccionado(); as u) {
+        <p><strong>ID:</strong> {{ u.id_usuario }}</p>
+        <p><strong>Nombre:</strong> {{ u.nombre_completo }}</p>
+        <p><strong>Fecha nacimiento:</strong> {{ u.fecha_nac| date:'dd/MM/yyyy' }}</p>
+        <p><strong>Correo:</strong> {{ u.correo }}</p>
+        <p><strong>Teléfono:</strong> {{ u.telefono }}</p>
+        <p><strong>Estado:</strong> {{ u.estado ? 'Activo' : 'Inactivo' }}</p>
+        <p><strong>Fecha registro:</strong> {{ u.fecha_registro | date:'dd/MM/yyyy' }}</p>
+      }
+
+      <button class="btn cerrar" (click)="cerrarModal()">Cerrar</button>
+
+    </div>
+  </div>
+}
+@if (modalAbiertoEliminar()) {
+  <div class="modal-backdrop" (click)="cerrarModalEliminar()">
+
+    <div class="modal modal-eliminar" (click)="$event.stopPropagation()">
+      
+      <h2>Confirmar eliminación</h2>
+
+      @if (usuarioSeleccionado(); as u) {
+        <p>
+          ¿Seguro que deseas eliminar a 
+          <strong>{{ u.nombre_completo }}</strong>?
+        </p>
+        <p class="warning">
+          Esta acción no se puede deshacer.
+        </p>
+      }
+
+      <div class="acciones-modal">
+        <button class="btn cancelar" (click)="cerrarModalEliminar()">
+          Cancelar
+        </button>
+
+        <button class="btn eliminar" (click)="confirmarEliminar()">
+          Eliminar
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+@if (modalAbiertoReactivar()) {
+  <div class="modal-backdrop" (click)="cerrarModalReactivar()">
+
+    <div class="modal modal-reactivar" (click)="$event.stopPropagation()">
+      
+      <h2>Reactivar usuario</h2>
+
+      @if (usuarioSeleccionado(); as u) {
+        <p>
+          ¿Deseas reactivar a 
+          <strong>{{ u.nombre_completo }}</strong>?
+        </p>
+
+        <p class="info">
+          El usuario volverá a tener acceso al sistema.
+        </p>
+      }
+
+      <div class="acciones-modal">
+        <button class="btn cancelar" (click)="cerrarModalReactivar()">
+          Cancelar
+        </button>
+
+        <button class="btn reactivar" (click)="confirmarReactivar()">
+          Reactivar
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+@if (modalAbiertoEditar()) {
+  <div class="modal-backdrop" (click)="cerrarModalEditar()">
+
+    <div class="modal modal-editar" (click)="$event.stopPropagation()">
+
+      <h2>Editar usuario</h2>
+
+      @if (usuarioSeleccionado(); as u) {
+
+        <!-- 🔒 CAMPOS BLOQUEADOS -->
+        <div class="form-group">
+          <label>ID</label>
+          <input type="text" [value]="u.id_usuario" disabled />
+        </div>
+
+        <div class="form-group">
+          <label>Correo</label>
+          <input type="text" [value]="u.correo" disabled />
+        </div>
+
+        <div class="form-group">
+          <label>Estado</label>
+          <input type="text" [value]="u.estado ? 'Activo' : 'Inactivo'" disabled />
+        </div>
+
+        <!-- ✏️ EDITABLES -->
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input
+        type="text"
+        [value]="formEditar().nombre_completo"
+        (input)="actualizarNombre($any($event.target).value)"
+        />
+
+        
+          @if (!nombreValido()) {
+            <small class="error">
+              Debe tener al menos 2 palabras y solo letras
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input
+        type="text"
+        [value]="formEditar().telefono"
+        (input)="actualizarTelefono($any($event.target).value)"
+        />  
+          @if (!telefonoValido()) {
+            <small class="error">
+              Solo números y mínimo 8 dígitos
+            </small>
+          }
+        </div>
+
+      }
+
+      <div class="acciones-modal">
+        <button class="btn cancelar" (click)="cerrarModalEditar()">
+          Cancelar
+        </button>
+
+        <button
+          class="btn guardar"
+          [disabled]="!formValido()"
+          (click)="confirmarEditar()"
+        >
+          Guardar cambios
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+<div *ngIf="modalAbiertoExito()" class="modal-backdrop">
+  <div class="modal modal-exito">
+    <h2>✅ {{ accionExitosa }}</h2>
+    <p>{{ mensajeExitoso }}</p>
+
+    <button class="btn" (click)="cerrarModalExito()">
+      Aceptar
+    </button>
+  </div>
+</div>
+<div *ngIf="modalAbiertoError()" class="modal-backdrop">
+  <div class="modal modal-error">
+    <h2>❌ {{ accionError }}</h2>
+    <p>{{ mensajeError }}</p>
+
+    <button class="btn" (click)="cerrarModalError()">
+      Cerrar
+    </button>
+  </div>
+</div>
+</section>

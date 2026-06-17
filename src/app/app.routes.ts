@@ -174,6 +174,9 @@ export const routes: Routes = [
             },
             {
                 path:'administradores/logsSeguridad', loadComponent:()=> import ('./Pages/OSI/paginas/logs-seguridad/logs-seguridad').then(m=>m.LogsSeguridad)
+            },
+            {
+                path:'gestión/usuarios', loadComponent:()=>import('./Pages/OSI/paginas/gestion-usuarios/gestion-usuarios').then(m=>m.GestionUsuarios)
             }
         ]
     }

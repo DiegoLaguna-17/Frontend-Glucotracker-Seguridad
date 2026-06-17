@@ -7,7 +7,7 @@
         {{ loadingGuardar() ? 'Guardando...' : 'Guardar cambios' }}
       </button>
       <button class="btn-agregar" (click)="abrirModal()">
-        Agregar rol
+        Crear rol
       </button>
     </div>
   </div>
@@ -17,6 +17,7 @@
       <thead>
         <tr>
           <th class="col-rol">Rol</th>
+          <th class="col-acciones">Acciones</th>
           <th class="col-permisos">Permisos y Accesos</th>
         </tr>
       </thead>
@@ -25,7 +26,13 @@
           <td class="cell-rol">
             <strong>{{ rol.nombre_rol | uppercase }}</strong>
           </td>
-          
+          <td class="cell-acciones">
+            <button 
+              [class]="rol.activo ? 'btn-status btn-eliminar' : 'btn-status btn-activar'"
+              (click)="abrirModalConfirmacion(rol)">
+              {{ rol.activo ? 'Eliminar' : 'Reactivar' }}
+            </button>
+          </td>
           <td class="cell-permisos">
             <div class="checkbox-grid">
               
@@ -86,3 +93,29 @@
     <button class="btn-entendido" (click)="cerrarModalAlerta()">Entendido</button>
   </div>
 </div> 
+<div class="modal-backdrop" *ngIf="mostrarModalConfirmar()" (click)="cerrarModalConfirmar()"></div>
+<div class="alert-modal" *ngIf="mostrarModalConfirmar()">
+  <button class="close" (click)="cerrarModalConfirmar()">✕</button>
+  
+  <h2 class="ttl">
+    ¿Confirmar acción? 
+    <span>{{ rolSeleccionado()?.activo ? 'Desactivación' : 'Reactivación' }}</span>
+  </h2>
+  
+  <p style="margin: 15px 0; color: #555; text-align: center;">
+    ¿Estás seguro de que deseas <strong>{{ rolSeleccionado()?.activo ? 'eliminar/desactivar' : 'reactivar' }}</strong> 
+    el rol <strong>{{ rolSeleccionado()?.nombre_rol | uppercase }}</strong>?
+  </p>
+
+  <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+    <button class="btn-entendido" (click)="cerrarModalConfirmar()" style="background-color: #6c757d; margin: 0;">
+      Cancelar
+    </button>
+    <button 
+      [class]="rolSeleccionado()?.activo ? 'btn-confirmar' : 'btn-confirmar success-bg'" 
+      (click)="confirmarCambioEstado()"
+      style="margin: 0; background-color: Merlin;">
+      {{ rolSeleccionado()?.activo ? 'Sí, Eliminar' : 'Sí, Reactivar' }}
+    </button>
+  </div>
+</div>

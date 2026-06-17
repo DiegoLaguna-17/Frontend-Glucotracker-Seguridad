@@ -87,6 +87,9 @@
         &.col-rol {
           width: 20%;
         }
+        &.col-acciones {
+          width: 15%;
+        }
       }
     }
 
@@ -107,6 +110,42 @@
           color: #333;
           font-weight: 500;
           padding-top: 24px;
+        }
+
+        // ESTILOS PARA LOS BOTONES DE ACCIONES
+        &.cell-acciones {
+          padding-top: 20px;
+
+          .btn-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+
+            &.btn-eliminar {
+              background-color: #fee2e2; 
+              color: #dc2626; 
+
+              &:hover {
+                background-color: #fca5a5;
+                transform: translateY(-1px);
+              }
+            }
+
+            &.btn-activar {
+              background-color: #d1fae5; 
+              color: #059669; 
+
+              &:hover {
+                background-color: #6ee7b7;
+                transform: translateY(-1px);
+              }
+            }
+          }
         }
       }
     }
@@ -276,6 +315,14 @@
       background: #d1e8e0;
       color: #88a39a;
       cursor: not-allowed;
+    }
+    &.success-bg {
+      background: #d1fae5;
+      color: #059669;
+
+      &:hover:not(:disabled) {
+        background: #6ee7b7;
+      }
     }
   }
 }

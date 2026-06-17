@@ -13,6 +13,7 @@ export interface PermisoInfo {
 export interface Rol {
   id_rol: number;
   nombre_rol: string;
+  activo: boolean; 
   permisos: PermisoInfo[];
 }
 
@@ -39,7 +40,9 @@ export class GestionRoles implements OnInit {
   showErrorModal = signal(false);
   modalMessage = signal('');
   
-
+  //  Señales de control para el modal de confirmación de eliminación/reactivación
+  mostrarModalConfirmar = signal(false);
+  rolSeleccionado = signal<Rol | null>(null);
   permisosDisponibles = computed(() => {
     const listaRoles = this.roles();
     if (listaRoles.length === 0) return [];
@@ -118,6 +121,7 @@ export class GestionRoles implements OnInit {
           payloadCambios.push({
             id_rol: rolActual.id_rol,
             nombre_rol: rolActual.nombre_rol,
+            activo: rolActual.activo, //  modificado para incluir el estado activo del rol
             permisos: permisosModificados
           });
         }
@@ -187,7 +191,44 @@ confirmarAgregarRol() {
     }
   });
 }
+// NUEVO: Controladores de Lógica para el botón de cambio de estado (Eliminar / Reactivar)
+  abrirModalConfirmacion(rol: Rol) {
+    this.rolSeleccionado.set(rol);
+    this.mostrarModalConfirmar.set(true);
+  }
 
+  cerrarModalConfirmar() {
+    this.mostrarModalConfirmar.set(false);
+    this.rolSeleccionado.set(null);
+  }
+
+  confirmarCambioEstado() {
+    const rol = this.rolSeleccionado();
+    if (!rol) return;
+    // Invertimos el estado: si es true (activo) pasa a false (eliminado/desactivado)
+    const nuevoEstado = !rol.activo; 
+    this.loadingGuardar.set(true);
+    this.http.patch(
+      `${environment.apiUrl}/administradores/roles/${rol.id_rol}/estado`,
+      { activo: nuevoEstado }, 
+      { withCredentials: true }
+    ).subscribe({
+      next: () => {
+        this.loadingGuardar.set(false);
+        this.cerrarModalConfirmar();
+        this.cargarMatriz(); 
+        const accionStr = nuevoEstado ? 'reactivado' : 'eliminado';
+        this.abrirModalExito(`El rol "${rol.nombre_rol.toUpperCase()}" fue ${accionStr} con éxito.`);
+      },
+      error: (err) => {
+        this.loadingGuardar.set(false);
+        this.cerrarModalConfirmar();
+        const errorMsg = err.error?.message || err.error?.error || 'Error al procesar el cambio de estado del rol.';
+        this.abrirModalError(errorMsg);
+      }
+    });
+  }
+  
   // --- NUEVO: Controladores de Modales de Alerta ---
   abrirModalExito(mensaje: string) {
     this.modalMessage.set(mensaje);
